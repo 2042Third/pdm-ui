@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="pdm"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\src\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/18604/Desktop/pdm_master/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/18604/Desktop/pdm_master/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/18604/Desktop/pdm_master/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="pdm">
+				<Option output="C:/Users/18604/Desktop/pdm_master/build/pdm.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/18604/Desktop/pdm_master/build"/>
+				<Option object_output="./"/>
+				<Option type="0"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DWXUSINGDLL"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add directory="C:/sdk/wxWidgets-3.1.5/lib/gcc_dll/mswu"/>
+					<Add directory="C:/sdk/wxWidgets-3.1.5/include"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include/c++/10.3.0"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include/c++/10.3.0/x86_64-w64-mingw32"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include/c++/10.3.0/backward"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 pdm"/>
+					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="pdm/fast">
+				<Option output="C:/Users/18604/Desktop/pdm_master/build/pdm.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/18604/Desktop/pdm_master/build"/>
+				<Option object_output="./"/>
+				<Option type="0"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DWXUSINGDLL"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add directory="C:/sdk/wxWidgets-3.1.5/lib/gcc_dll/mswu"/>
+					<Add directory="C:/sdk/wxWidgets-3.1.5/include"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include/c++/10.3.0"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include/c++/10.3.0/x86_64-w64-mingw32"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include/c++/10.3.0/backward"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 pdm/fast"/>
+					<CompileFile command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/msys64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/18604/Desktop/pdm_master/build/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/Resource.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/auth.cpp">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/auth.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/cApp.cpp">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/cApp.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/cMain.cpp">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/cMain.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/cc20_dev.hpp">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/cc20_multi.cpp">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/cc20_multi.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/id.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/pdm-service.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/pdmFile.cpp">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/pdmFile.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/resource1.h">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/18604/Desktop/pdm_master/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

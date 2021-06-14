@@ -1,0 +1,5 @@
+C:/Users/18604/Desktop/pdm_master/build/CMakeFiles/edit_cache.dir
+C:/Users/18604/Desktop/pdm_master/build/CMakeFiles/rebuild_cache.dir
+C:/Users/18604/Desktop/pdm_master/build/src/CMakeFiles/pdm.dir
+C:/Users/18604/Desktop/pdm_master/build/src/CMakeFiles/edit_cache.dir
+C:/Users/18604/Desktop/pdm_master/build/src/CMakeFiles/rebuild_cache.dir
