@@ -339,7 +339,7 @@ void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
 		//pane_usrspc->EndTextColour();
 		OnFont();
 		//pane_usrspc->BeginTextColour(wxTheColourDatabase->Find("WHITE"));
-		encrypt_cc20(string(CurrentDocPath.mb_str()));
+		//////encrypt_cc20(string(CurrentDocPath.mb_str()));
 		//// Set the Title to reflect the  file open
 		//SetTitle(wxString("Edit - ") << OpenDialog->GetFilename());
 	}
