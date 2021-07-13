@@ -19,7 +19,8 @@ find_package(wxWidgets COMPONENTS aui adv html xml net richtext core base REQUIR
 include( "${wxWidgets_USE_FILE}" )
 
 # Add source files
-set(SOURCE_FILES auth.cpp  cc20_dev.cpp  pdm-service.hpp  Resource.h cApp.cpp cc20_multi.cpp cMain.cpp pdmFile.cpp)
+# set(SOURCE_FILES  cApp.cpp )
+set(SOURCE_FILES auth.cpp pdm-service.hpp  cApp.cpp cc20_multi.cpp cMain.cpp pdmFile.cpp)
 
 # If we build for windows systems, we also include the resource file
 # containing the manifest, icon and other resources

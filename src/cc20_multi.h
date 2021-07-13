@@ -22,7 +22,10 @@ author:     Yi Yang
 #include <errno.h>
 #include <iostream>
 
-
+#ifndef BYTES_DEFINED
+#define BYTES_DEFINED
+typedef std::vector<uint8_t> Bytes;
+#endif
 
 
 class Cc20{

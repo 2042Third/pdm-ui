@@ -96,12 +96,12 @@ src/clean: src/CMakeFiles/pdm.dir/clean
 src/CMakeFiles/pdm.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/pdm.dir/build.make src/CMakeFiles/pdm.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/pdm.dir/build.make src/CMakeFiles/pdm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target pdm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target pdm"
 .PHONY : src/CMakeFiles/pdm.dir/all
 
 # Build rule for subdir invocation for target.
 src/CMakeFiles/pdm.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/pdm.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles 0
 .PHONY : src/CMakeFiles/pdm.dir/rule

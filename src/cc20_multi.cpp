@@ -11,13 +11,18 @@ author:     Yi Yang
 #define CC20_MULTI_CPP_ 
 
 
-#include "cc20_dev.cpp"
+#include "cc20_dev.hpp"
+//#include "pdm-service.hpp"
 #include "cc20_multi.h"
 #include "../lib/sha3.cpp"
 #include <thread>
 #include <numeric>
 #include <unistd.h>
 
+#ifndef BYTES_DEFINED
+#define BYTES_DEFINED
+typedef std::vector<uint8_t> Bytes;
+#endif
 
 using namespace std;
 

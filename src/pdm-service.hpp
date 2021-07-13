@@ -1,14 +1,14 @@
 
 /*
-pdm-service.h
+pdm-service.hpp
 
 pdm/Personal Data Management system is a encrypted and multiplatform data searching, building, archiving tool.
 
 author:     Yi Yang
             5/2021
 */
-#ifndef _pdm_service_
-#define _pdm_service_
+#ifndef _PDM_SERVICE_
+#define _PDM_SERVICE_
 
 #include <fstream>
 #include <stdio.h>
@@ -21,7 +21,10 @@ author:     Yi Yang
 #endif
 
 // Types
+#ifndef BYTES_DEFINED
+#define BYTES_DEFINED
 typedef std::vector<uint8_t> Bytes;
+#endif
 template<typename T, int N> using raw_array = T[N];
 
 

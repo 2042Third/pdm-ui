@@ -7,8 +7,9 @@ author:     Yi Yang
             5/2021
 */
 
-#ifndef CC20_MULTI_CPP_
-#define CC20_MULTI_CPP_ 
+#ifndef _CC20_DEV_HPP_
+#define _CC20_DEV_HPP_ 
+
 
 
 #include "pdm-service.hpp"
@@ -43,7 +44,10 @@ author:     Yi Yang
 #include <fcntl.h>
 
 #endif
-
+#ifndef BYTES_DEFINED
+#define BYTES_DEFINED
+typedef std::vector<uint8_t> Bytes;
+#endif
 using namespace std;
 unsigned int i=0;
 

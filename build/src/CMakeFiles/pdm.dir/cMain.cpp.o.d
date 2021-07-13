@@ -513,8 +513,8 @@ src/CMakeFiles/pdm.dir/cMain.cpp.o: \
   /usr/local/include/wx-3.1/wx/osx/colordlg.h \
   /usr/local/include/wx-3.1/wx/numdlg.h \
   /usr/local/include/wx-3.1/wx/generic/numdlgg.h \
+  /usr/local/include/wx-3.1/wx/dir.h \
+  /usr/local/include/wx-3.1/wx/busyinfo.h \
+  /usr/local/include/wx-3.1/wx/generic/busyinfo.h \
   /usr/local/include/wx-3.1/wx/renderer.h \
-  /usr/local/include/wx-3.1/wx/wupdlock.h \
-  /Users/mikeyang/Documents/tooling/pdm-ui/src/pdm-folder.xpm \
-  /Users/mikeyang/Documents/tooling/pdm-ui/src/pdm-tree-files.xpm \
-  /Users/mikeyang/Documents/tooling/pdm-ui/src/logo.xpm
+  /usr/local/include/wx-3.1/wx/wupdlock.h

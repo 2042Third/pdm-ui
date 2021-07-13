@@ -7,8 +7,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/pdm.dir/cApp.cpp.o.d"
   "CMakeFiles/pdm.dir/cMain.cpp.o"
   "CMakeFiles/pdm.dir/cMain.cpp.o.d"
-  "CMakeFiles/pdm.dir/cc20_dev.cpp.o"
-  "CMakeFiles/pdm.dir/cc20_dev.cpp.o.d"
   "CMakeFiles/pdm.dir/cc20_multi.cpp.o"
   "CMakeFiles/pdm.dir/cc20_multi.cpp.o.d"
   "CMakeFiles/pdm.dir/pdmFile.cpp.o"

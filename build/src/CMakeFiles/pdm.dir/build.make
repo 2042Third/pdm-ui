@@ -83,24 +83,10 @@ src/CMakeFiles/pdm.dir/auth.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/pdm.dir/auth.cpp.s"
 	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mikeyang/Documents/tooling/pdm-ui/src/auth.cpp -o CMakeFiles/pdm.dir/auth.cpp.s
 
-src/CMakeFiles/pdm.dir/cc20_dev.cpp.o: src/CMakeFiles/pdm.dir/flags.make
-src/CMakeFiles/pdm.dir/cc20_dev.cpp.o: ../src/cc20_dev.cpp
-src/CMakeFiles/pdm.dir/cc20_dev.cpp.o: src/CMakeFiles/pdm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/pdm.dir/cc20_dev.cpp.o"
-	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/pdm.dir/cc20_dev.cpp.o -MF CMakeFiles/pdm.dir/cc20_dev.cpp.o.d -o CMakeFiles/pdm.dir/cc20_dev.cpp.o -c /Users/mikeyang/Documents/tooling/pdm-ui/src/cc20_dev.cpp
-
-src/CMakeFiles/pdm.dir/cc20_dev.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/pdm.dir/cc20_dev.cpp.i"
-	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mikeyang/Documents/tooling/pdm-ui/src/cc20_dev.cpp > CMakeFiles/pdm.dir/cc20_dev.cpp.i
-
-src/CMakeFiles/pdm.dir/cc20_dev.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/pdm.dir/cc20_dev.cpp.s"
-	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mikeyang/Documents/tooling/pdm-ui/src/cc20_dev.cpp -o CMakeFiles/pdm.dir/cc20_dev.cpp.s
-
 src/CMakeFiles/pdm.dir/cApp.cpp.o: src/CMakeFiles/pdm.dir/flags.make
 src/CMakeFiles/pdm.dir/cApp.cpp.o: ../src/cApp.cpp
 src/CMakeFiles/pdm.dir/cApp.cpp.o: src/CMakeFiles/pdm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/pdm.dir/cApp.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/pdm.dir/cApp.cpp.o"
 	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/pdm.dir/cApp.cpp.o -MF CMakeFiles/pdm.dir/cApp.cpp.o.d -o CMakeFiles/pdm.dir/cApp.cpp.o -c /Users/mikeyang/Documents/tooling/pdm-ui/src/cApp.cpp
 
 src/CMakeFiles/pdm.dir/cApp.cpp.i: cmake_force
@@ -114,7 +100,7 @@ src/CMakeFiles/pdm.dir/cApp.cpp.s: cmake_force
 src/CMakeFiles/pdm.dir/cc20_multi.cpp.o: src/CMakeFiles/pdm.dir/flags.make
 src/CMakeFiles/pdm.dir/cc20_multi.cpp.o: ../src/cc20_multi.cpp
 src/CMakeFiles/pdm.dir/cc20_multi.cpp.o: src/CMakeFiles/pdm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/pdm.dir/cc20_multi.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/pdm.dir/cc20_multi.cpp.o"
 	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/pdm.dir/cc20_multi.cpp.o -MF CMakeFiles/pdm.dir/cc20_multi.cpp.o.d -o CMakeFiles/pdm.dir/cc20_multi.cpp.o -c /Users/mikeyang/Documents/tooling/pdm-ui/src/cc20_multi.cpp
 
 src/CMakeFiles/pdm.dir/cc20_multi.cpp.i: cmake_force
@@ -128,7 +114,7 @@ src/CMakeFiles/pdm.dir/cc20_multi.cpp.s: cmake_force
 src/CMakeFiles/pdm.dir/cMain.cpp.o: src/CMakeFiles/pdm.dir/flags.make
 src/CMakeFiles/pdm.dir/cMain.cpp.o: ../src/cMain.cpp
 src/CMakeFiles/pdm.dir/cMain.cpp.o: src/CMakeFiles/pdm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/CMakeFiles/pdm.dir/cMain.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/pdm.dir/cMain.cpp.o"
 	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/pdm.dir/cMain.cpp.o -MF CMakeFiles/pdm.dir/cMain.cpp.o.d -o CMakeFiles/pdm.dir/cMain.cpp.o -c /Users/mikeyang/Documents/tooling/pdm-ui/src/cMain.cpp
 
 src/CMakeFiles/pdm.dir/cMain.cpp.i: cmake_force
@@ -142,7 +128,7 @@ src/CMakeFiles/pdm.dir/cMain.cpp.s: cmake_force
 src/CMakeFiles/pdm.dir/pdmFile.cpp.o: src/CMakeFiles/pdm.dir/flags.make
 src/CMakeFiles/pdm.dir/pdmFile.cpp.o: ../src/pdmFile.cpp
 src/CMakeFiles/pdm.dir/pdmFile.cpp.o: src/CMakeFiles/pdm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object src/CMakeFiles/pdm.dir/pdmFile.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/CMakeFiles/pdm.dir/pdmFile.cpp.o"
 	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/pdm.dir/pdmFile.cpp.o -MF CMakeFiles/pdm.dir/pdmFile.cpp.o.d -o CMakeFiles/pdm.dir/pdmFile.cpp.o -c /Users/mikeyang/Documents/tooling/pdm-ui/src/pdmFile.cpp
 
 src/CMakeFiles/pdm.dir/pdmFile.cpp.i: cmake_force
@@ -156,7 +142,6 @@ src/CMakeFiles/pdm.dir/pdmFile.cpp.s: cmake_force
 # Object files for target pdm
 pdm_OBJECTS = \
 "CMakeFiles/pdm.dir/auth.cpp.o" \
-"CMakeFiles/pdm.dir/cc20_dev.cpp.o" \
 "CMakeFiles/pdm.dir/cApp.cpp.o" \
 "CMakeFiles/pdm.dir/cc20_multi.cpp.o" \
 "CMakeFiles/pdm.dir/cMain.cpp.o" \
@@ -166,14 +151,13 @@ pdm_OBJECTS = \
 pdm_EXTERNAL_OBJECTS =
 
 pdm: src/CMakeFiles/pdm.dir/auth.cpp.o
-pdm: src/CMakeFiles/pdm.dir/cc20_dev.cpp.o
 pdm: src/CMakeFiles/pdm.dir/cApp.cpp.o
 pdm: src/CMakeFiles/pdm.dir/cc20_multi.cpp.o
 pdm: src/CMakeFiles/pdm.dir/cMain.cpp.o
 pdm: src/CMakeFiles/pdm.dir/pdmFile.cpp.o
 pdm: src/CMakeFiles/pdm.dir/build.make
 pdm: src/CMakeFiles/pdm.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable ../pdm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/mikeyang/Documents/tooling/pdm-ui/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable ../pdm"
 	cd /Users/mikeyang/Documents/tooling/pdm-ui/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/pdm.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

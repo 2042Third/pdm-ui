@@ -33,7 +33,19 @@
 #include <wx/dialog.h>
 #include "wx/richtext/richtextctrl.h"
 //#include <wx/richtext/richtextbuffer.h>
+// #define wxUSE_DRAG_AND_DROP = 1
 
+class DnDFile : public wxFileDropTarget
+{
+public:
+    DnDFile(wxRichTextCtrl *pOwner = NULL) { m_pOwner = pOwner; }
+
+    virtual bool OnDropFiles(wxCoord x, wxCoord y,
+                             const wxArrayString& filenames) wxOVERRIDE;
+
+private:
+    wxRichTextCtrl *m_pOwner;
+};
 
 class Tree_Data : public wxTreeItemData
 {
@@ -109,6 +121,8 @@ public:
 	wxString CurrentDocPath;
 	// Var
 	wxSize size = wxGetDisplaySize();
+	wxRichTextAttr attr;
+
 
 	// Menu&Bar
 	wxMenuBar* menu_bar;
@@ -122,15 +136,17 @@ public:
 	// Window handle
 	wxPanel* panel = nullptr;
 	wxStaticBox* pane_auth = nullptr;
-	wxPanel* pane_files = nullptr;
+	wxRichTextCtrl* pane_files = nullptr;
 	wxRichTextCtrl* pane_usrspc = nullptr;
 	wxBoxSizer* pane_sizer = nullptr;
+	wxBoxSizer* pane_files_sizer = nullptr;
 	wxStaticText* txt = nullptr;
 
 	 
 	// Border Val
 	int size_border_ver = 7;
 	int size_border_hor = 20;
+
 
 	// Event handle
 	void stc_quit(wxCommandEvent& event);
@@ -143,11 +159,12 @@ public:
 	void OnFont();
 	void Resize();
 	
-	
 	// Decrypted tree
 	void create_dec_tree();
 private:
-	
+	wxString fileText = _T("请将需要加密的文件拖入此窗口");
+	// void OnDropFiles(wxDropFilesEvent& event);
+	void maintain_theme();
 
 	// Decrypted tree control
 	void tree_creator(long style);
@@ -157,6 +174,7 @@ private:
 	
 	//wxRichTextCtrl* m_richTextCtrl;
 };
+
 
 enum{
 	Dec_Tree = 1000

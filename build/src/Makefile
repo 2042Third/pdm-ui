@@ -202,30 +202,6 @@ cMain.cpp.s:
 	cd /Users/mikeyang/Documents/tooling/pdm-ui/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/pdm.dir/build.make src/CMakeFiles/pdm.dir/cMain.cpp.s
 .PHONY : cMain.cpp.s
 
-cc20_dev.o: cc20_dev.cpp.o
-.PHONY : cc20_dev.o
-
-# target to build an object file
-cc20_dev.cpp.o:
-	cd /Users/mikeyang/Documents/tooling/pdm-ui/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/pdm.dir/build.make src/CMakeFiles/pdm.dir/cc20_dev.cpp.o
-.PHONY : cc20_dev.cpp.o
-
-cc20_dev.i: cc20_dev.cpp.i
-.PHONY : cc20_dev.i
-
-# target to preprocess a source file
-cc20_dev.cpp.i:
-	cd /Users/mikeyang/Documents/tooling/pdm-ui/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/pdm.dir/build.make src/CMakeFiles/pdm.dir/cc20_dev.cpp.i
-.PHONY : cc20_dev.cpp.i
-
-cc20_dev.s: cc20_dev.cpp.s
-.PHONY : cc20_dev.s
-
-# target to generate assembly for a file
-cc20_dev.cpp.s:
-	cd /Users/mikeyang/Documents/tooling/pdm-ui/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/pdm.dir/build.make src/CMakeFiles/pdm.dir/cc20_dev.cpp.s
-.PHONY : cc20_dev.cpp.s
-
 cc20_multi.o: cc20_multi.cpp.o
 .PHONY : cc20_multi.o
 
@@ -292,9 +268,6 @@ help:
 	@echo "... cMain.o"
 	@echo "... cMain.i"
 	@echo "... cMain.s"
-	@echo "... cc20_dev.o"
-	@echo "... cc20_dev.i"
-	@echo "... cc20_dev.s"
 	@echo "... cc20_multi.o"
 	@echo "... cc20_multi.i"
 	@echo "... cc20_multi.s"

@@ -6,6 +6,9 @@
 // Tree added includes
 #include "wx/colordlg.h"
 #include "wx/numdlg.h"
+#include <wx/dir.h>
+#include <wx/busyinfo.h>
+#include <wx/arrstr.h>
 
 #include "wx/artprov.h"
 #include "wx/image.h"
@@ -14,12 +17,8 @@
 #include "wx/math.h"
 #include "wx/renderer.h"
 #include "wx/wupdlock.h"
+#include "wx/dnd.h"
 
-// Icon Imports
-#include "pdm-folder.xpm"
-#include "pdm-tree-files.xpm"
-#include "logo.xpm"
-// END Icon Imports
 
 // TESTING ONLY -- Adapted from offical manual
 static const int NUM_CHILDREN_PER_LEVEL = 5;
@@ -32,6 +31,8 @@ static const int NUM_LEVELS = 2;
 	wxDECLARE_APP(cApp);
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 	//EVT_TEXT_ENTER(10001,OnKeyEnter)
+	
+	// EVT_DROP_FILES(wxEVT_DROP_FILES,cMain::OnDropFiles) 
 	EVT_MENU(wxID_SAVE, cMain::stc_save)
 	EVT_MENU(wxID_OPEN, cMain::stc_open)
 	EVT_MENU(wxID_EXIT, cMain::stc_quit)
@@ -99,6 +100,7 @@ cMain::cMain(wxWindow* parent,
 	Bind(wxEVT_MENU, &cMain::stc_open, this, wxID_OPEN);
 	Bind(wxEVT_MENU, &cMain::stc_quit, this, wxID_EXIT);
 
+	// maintain_theme();
 	// Panel start
 	panel = new wxPanel(this);
 	panel->SetMinSize(GetBestSize());
@@ -106,36 +108,29 @@ cMain::cMain(wxWindow* parent,
 	SetMenuBar(menu_bar);
 	pane_sizer->SetMinSize(GetBestSize());
 
+	// maintain_theme();
 
 	txt = new wxStaticText(panel, wxID_ANY, wxT("Decrypted Files"));
 
-	// pane_files = new wxPanel(panel,102,wxDefaultPosition,wxDefaultSize,2621440L,"Decrypted Files");
+	pane_files = new wxRichTextCtrl(panel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
 	create_dec_tree();
 	pane_usrspc = new wxRichTextCtrl(panel, 103, "");
+	pane_files_sizer = new wxBoxSizer(wxVERTICAL);
 
-	tree_ctrl->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
-	tree_ctrl->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
-	pane_usrspc->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
-	pane_usrspc->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
-	wxRichTextAttr attr;
-	attr.SetTextColour(*wxWHITE);
-	OnFont();
-	pane_usrspc->SetStyleEx(wxRichTextRange(-1,-1), attr,wxRICHTEXT_SETSTYLE_CHARACTERS_ONLY);
+	maintain_theme();
+	
+	pane_files_sizer->Add(tree_ctrl,1, wxALL | wxEXPAND, size_border_hor);
+	pane_files_sizer->Add(pane_files,1, wxALL | wxEXPAND, size_border_hor);
 
-	pane_sizer->Add(tree_ctrl, 1, wxALL | wxEXPAND, size_border_hor);
+	pane_sizer->Add(pane_files_sizer, 1, wxALL | wxEXPAND, size_border_hor);
 	pane_sizer->Add(pane_usrspc, 2, wxALL | wxEXPAND, size_border_ver);
 	panel->SetSizer(pane_sizer);
-
-	panel->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
-	panel->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
-
-
-	// Color Settings
-	panel->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
-	panel->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
-	txt->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
-
+	// pane_files->DragAcceptFiles(true);
+	pane_files->SetDropTarget(new DnDFile(pane_files));
+	maintain_theme();
+	pane_files->WriteText(_T("请将需要加密的文件拖入此窗口"));
 	// Panel Text
+	// pane_files->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(cMain::OnDropFiles), NULL, this);
 
 	menu_bar->Append(menu_file, wxT("&File"));
 
@@ -322,6 +317,25 @@ void Tree_Ctrl::OnItemCollapsing(wxTreeEvent& event)
     // }
 }
 
+void cMain::maintain_theme(){
+	attr.SetTextColour(*wxWHITE);
+	// Color Settings
+		panel->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
+	panel->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+	txt->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+
+	tree_ctrl->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
+	tree_ctrl->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+	if(1){pane_files->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
+	pane_files->SetDefaultStyle(attr);}
+	if(1){pane_usrspc->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
+	pane_usrspc->SetDefaultStyle(attr);}
+	pane_files->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+	//pane_usrspc->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+	
+	//OnFont();
+}
+
 void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
 	wxFileDialog* OpenDialog = new wxFileDialog(
 		this, _("Choose a file to open"), wxEmptyString, wxEmptyString,
@@ -334,15 +348,60 @@ void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
 		CurrentDocPath = OpenDialog->GetPath();
 		std::cout << "doc dir: " << CurrentDocPath << std::endl;
 		wxMessageBox(CurrentDocPath, CurrentDocPath, wxOK);
-		// Sets our current document to the file the user selected
+		maintain_theme();
 		pane_usrspc->LoadFile(CurrentDocPath); //Opens that file
-		//pane_usrspc->EndTextColour();
+		maintain_theme();
 		OnFont();
-		//pane_usrspc->BeginTextColour(wxTheColourDatabase->Find("WHITE"));
-		//////encrypt_cc20(string(CurrentDocPath.mb_str()));
-		//// Set the Title to reflect the  file open
-		//SetTitle(wxString("Edit - ") << OpenDialog->GetFilename());
+
 	}
+}
+// void cMain::OnDropFiles(wxDropFilesEvent& event)   
+//     {
+//         if (event.GetNumberOfFiles() > 0) {
+
+//             wxString* dropped = event.GetFiles();
+//             wxASSERT(dropped);
+
+//             wxBusyCursor busyCursor;
+//             wxWindowDisabler disabler;    
+//             wxBusyInfo busyInfo(_("Adding files, wait please..."));
+
+//             wxString name;
+//             wxArrayString files;
+
+//             for (int i = 0; i < event.GetNumberOfFiles(); i++) {
+//                 name = dropped[i];
+//                 if (wxFileExists(name))
+//                     files.push_back(name);
+//                 else if (wxDirExists(name))
+//                     wxDir::GetAllFiles(name, &files);                                    
+//             }
+
+//             wxTextCtrl* textCtrl = dynamic_cast<wxTextCtrl*>(event.GetEventObject());
+//             wxASSERT(textCtrl);
+//             textCtrl->Clear();
+//             for (size_t i = 0; i < files.size(); i++) {
+//                 *textCtrl << files[i] << wxT('\n');
+//             }
+//         }
+//     }
+
+bool DnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
+{
+    size_t nFiles = filenames.GetCount();
+    wxString str;
+    str.Printf( "%d files dropped", (int)nFiles);
+
+    if (m_pOwner != NULL)
+    {
+    	m_pOwner->WriteText(_T("请将需要加密的文件拖入此窗口"));
+        // m_pOwner->Append(str);
+        for ( size_t n = 0; n < nFiles; n++ )
+    		m_pOwner->WriteText(filenames[n]);
+            // m_pOwner->Append(filenames[n]);
+    }
+
+    return true;
 }
 
 void cMain::OnFont()
@@ -357,6 +416,7 @@ void cMain::OnFont()
 	attr.SetTextColour(*wxWHITE);
 
 	pane_usrspc->SetStyleEx(range, attr);
+	pane_files->SetStyleEx(range,attr);
 }
 
 void cMain::stc_save(wxCommandEvent& WXUNUSED(event)) {
