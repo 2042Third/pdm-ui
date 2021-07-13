@@ -9,7 +9,7 @@
 # NOTE: if you're using aui, include aui in this required components list.
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS aui adv html xml net richtext core base REQUIRED)
+find_package(wxWidgets COMPONENTS all REQUIRED)
  
 ##---------------------------------------------------
 ## Actual config file starts here

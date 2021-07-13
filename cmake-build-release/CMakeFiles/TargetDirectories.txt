@@ -1,0 +1,5 @@
+/Users/mikeyang/Downloads/pdm-ui-main/cmake-build-release/CMakeFiles/rebuild_cache.dir
+/Users/mikeyang/Downloads/pdm-ui-main/cmake-build-release/CMakeFiles/edit_cache.dir
+/Users/mikeyang/Downloads/pdm-ui-main/cmake-build-release/src/CMakeFiles/rebuild_cache.dir
+/Users/mikeyang/Downloads/pdm-ui-main/cmake-build-release/src/CMakeFiles/edit_cache.dir
+/Users/mikeyang/Downloads/pdm-ui-main/cmake-build-release/src/CMakeFiles/pdm.dir
