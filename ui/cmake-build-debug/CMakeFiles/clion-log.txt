@@ -1,0 +1,17 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal
+-- The C compiler identification is AppleClang 12.0.5.12050022
+-- The CXX compiler identification is AppleClang 12.0.5.12050022
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found wxWidgets: -L/Users/mikeyang/Downloads/wxWidgets-3.1.5/makeGTK/lib;;;-framework IOKit;-framework Carbon;-framework Cocoa;-framework QuartzCore;-framework AudioToolbox;-framework System;-framework OpenGL;-lwx_osx_cocoau_xrc-3.1;-lwx_osx_cocoau_webview-3.1;-lwx_osx_cocoau_stc-3.1;-lwx_osx_cocoau_richtext-3.1;-lwx_osx_cocoau_ribbon-3.1;-lwx_osx_cocoau_propgrid-3.1;-lwx_osx_cocoau_aui-3.1;-lwx_osx_cocoau_gl-3.1;-lwx_osx_cocoau_html-3.1;-lwx_osx_cocoau_qa-3.1;-lwx_osx_cocoau_core-3.1;-lwx_baseu_xml-3.1;-lwx_baseu_net-3.1;-lwx_baseu-3.1 (found suitable version "3.1.5", minimum required is "3.1") 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cmake-build-debug
