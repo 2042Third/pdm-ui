@@ -10,6 +10,7 @@ author:     Yi Yang
 #define _cc20_multi_
 
 #include <stdio.h>
+#include <string>
 #include <chrono>
 // Added 
 #ifndef WINDOWS
@@ -20,12 +21,8 @@ author:     Yi Yang
 #include <fcntl.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <iostream>
 
-#ifndef BYTES_DEFINED
-#define BYTES_DEFINED
-typedef std::vector<uint8_t> Bytes;
-#endif
+
 
 
 class Cc20{
@@ -40,8 +37,7 @@ public:
   void set_vals(uint8_t * nonce, uint8_t*key);
   void one_block (int thrd, uint32_t count);
   void endicha(uint8_t *a, uint32_t *b);
-  void get_enc(const std::string file_name);
-  void get_dec(const std::string file_name);
+  
 
   // Make sure this number is same as THREAD_COUNT
   //           *

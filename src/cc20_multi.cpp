@@ -7,22 +7,17 @@ This is the encryption core module for pdm.
 author:     Yi Yang
             5/2021
 */
-#ifndef CC20_MULTI_CPP_
-#define CC20_MULTI_CPP_ 
 
 
-#include "cc20_dev.hpp"
-//#include "pdm-service.hpp"
+
+#include "cc20_dev.cpp"
 #include "cc20_multi.h"
 #include "../lib/sha3.cpp"
 #include <thread>
 #include <numeric>
 #include <unistd.h>
 
-#ifndef BYTES_DEFINED
-#define BYTES_DEFINED
-typedef std::vector<uint8_t> Bytes;
-#endif
+int DE = 0;
 
 using namespace std;
 
@@ -232,10 +227,13 @@ void Cc20::rd_file_encr(const std::string file_name, string oufile_name) {
   long int tracker = 0;
   long int np = 0, tmpn = np % THREAD_COUNT;
   
-  #ifdef DE
-  ttn-=12;
-  line=line+12;
-  #endif
+//  #ifdef DE
+  if(DE){
+      ttn-=12;
+
+      line=line+12;
+  }
+//  #endif
   thread progress;
   if (DISPLAY_PROG){
     for (unsigned int i=0; i<THREAD_COUNT;i++){
@@ -343,7 +341,7 @@ void display_progress(unsigned int n) {
   cout<<endl;
   while(current<res){
     acum=0;
-    if(((float)accumulate(progress_bar,progress_bar+THREAD_COUNT,acum)/n) *res>=current){
+    if(((float)accumulate(progress_bar,progress_bar+THREAD_COUNT,acum)/n) *res>=current || n<10000){
       current++;
       cout<<"-"<<flush;
     }
@@ -468,8 +466,11 @@ void Cc20::endicha(uint8_t * a, uint32_t * b) {
  * @param nonce the nonce of this encryption
  * 
  * */
-void cmd_enc(string infile_name, string oufile_name, string text_nonce){
+void cmd_enc( string oufile_name){
   // cout<<infile_name<<","<<oufile_name<<","<<text_nonce<<"\n"<<endl;
+  Bytes cur;
+  init_byte_rand_cc20(cur,12);
+  string text_nonce = btos(cur);
   Cc20 cry_obj;
   string text_key;
   Bytes key;
@@ -477,7 +478,7 @@ void cmd_enc(string infile_name, string oufile_name, string text_nonce){
 
   // boost::algorithm::trim(infile_name);
 
-  #ifdef LINUX
+  #ifdef __WXOSX__ || __WXGTK__
   termios oldt;
   tcgetattr(STDIN_FILENO, & oldt);
   termios newt = oldt;
@@ -489,7 +490,7 @@ void cmd_enc(string infile_name, string oufile_name, string text_nonce){
   cout << endl;
   #endif
 
-  #ifdef WINDOWS
+  #ifdef __WXMSW__
   HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
   DWORD mode = 0;
   GetConsoleMode(hStdin, & mode);
@@ -503,92 +504,43 @@ void cmd_enc(string infile_name, string oufile_name, string text_nonce){
   key_hash.add(stob(text_key).data(),text_key.size());
   key_hash.add(stob(text_key).data(),text_key.size());
 
-  #ifdef DE
-  uint8_t *line1[13]={0};
-  string infile_name_copy = infile_name+".pdm";
-  FILE * infile = fopen(infile_name_copy.data(), "rb");
-  fread(line1,sizeof(char), 12,infile);
-  if(line1!=NULL)
-    text_nonce=(char*)line1;
-  fclose(infile);
+  if(DE){
+    uint8_t *line1[13]={0};
+    //    string infile_name_copy = infile_name+".pdm";
+    //    FILE * infile = fopen(infile_name_copy.data(), "rb");
+    //    fread(line1,sizeof(char), 12,infile);
+    //    if(line1!=NULL)
+    //      text_nonce=(char*)line1;
+    //    fclose(infile);
+    //  }
 
-  #endif
-
-  if (text_nonce.size() != 0) {
-    text_nonce = pad_to_key((string) text_nonce, 12);
-  }
-
-  // Timer
-  auto start = std::chrono::high_resolution_clock::now();
-  // cout<<"before: "<<text_nonce.data()<<endl;
-  cry_obj.set_vals((uint8_t*)text_nonce.data(), (uint8_t *)key_hash.getHash().data());
-
-
-  #ifdef DE
-  cry_obj.rd_file_encr(infile_name_copy,"dec-"+infile_name);
-  if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
-
-  #else
-  cry_obj.rd_file_encr(infile_name, infile_name+".pdm");
-  if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
-  #endif //END DE
-  auto end = std::chrono::high_resolution_clock::now();
-  auto dur = end - start;
-  auto i_millis = std::chrono::duration_cast < std::chrono::milliseconds > (dur);
-  auto f_secs = std::chrono::duration_cast < std::chrono::duration < float >> (dur);
-  std::cout << f_secs.count() << '\n';
-}
-
-string convertToString(char* a, int size)
-{
-    int i;
-    string s = "";
-    for (i = 0; i < size; i++) {
-        s = s + a[i];
+    if (text_nonce.size() != 0) {
+      text_nonce = pad_to_key((string) text_nonce, 12);
     }
-    return s;
-}
 
-void set_config(char*inp){
-  string a = inp;
-  for(unsigned int i=0;i<a.size();i++){
-    if (a[i] == 's' ) ENABLE_SHA3_OUTPUT = 0;
-    else if (a[i] == 'h' ) DISPLAY_PROG = 0;
-  }
-}
+    // Timer
+    auto start = std::chrono::high_resolution_clock::now();
+    cry_obj.set_vals((uint8_t*)text_nonce.data(), (uint8_t *)key_hash.getHash().data());
 
-int rd_inp(unsigned int argc, char ** argv, string *infile){
-  int arg_c=1;
-  for (unsigned int i = 1; i< argc;i++){
-    if (argv[i][0] == '-'){
-      set_config(argv[i]);
+
+    if(DE){
+      //    cry_obj.rd_file_encr(infile_name,"dec-"+infile_name);
+      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
     }
-    else{
-      if (infile->empty()){
-        arg_c++;
-        *infile = argv[i];
-      }
-      else
-        return 0;
+    else {
+      //    cry_obj.rd_file_encr(infile_name, infile_name+".pdm");
+      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
     }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto dur = end - start;
+    auto i_millis = std::chrono::duration_cast < std::chrono::milliseconds > (dur);
+    auto f_secs = std::chrono::duration_cast < std::chrono::duration < float >> (dur);
+    std::cout << f_secs.count() << '\n';
   }
-  if(!ENABLE_SHA3_OUTPUT)
-    cout<<"sha3 output disabled"<<endl;
-  return arg_c;
+
+
+
+
+
+
 }
-
-
-int _main_cc20(int argc, char ** argv) {
-  string infile,oufile,nonce;
-  if (rd_inp(argc,argv,&infile)!=2){
-    cout<<argc<<" Wrong input; Should have 1 file input!\n"<<endl;
-    return 0;
-  }
-  Bytes cur ;
-  init_byte_rand_cc20(cur,12);
-  nonce="1";
-  cmd_enc(infile,"",btos(cur));
-  return 0;
-}
-
-#endif

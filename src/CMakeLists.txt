@@ -1,36 +1,66 @@
-##---------------------------------------------------
-## Please set your wxWidgets configuration here
-##--------------------------------------------------- 
- 
-# Here you can define what libraries of wxWidgets you need for your
-# application. You can figure out what libraries you need here;
-# https://www.wxwidgets.org/manuals/2.8/wx_librarieslist.html
-# We need the Find package for wxWidgets to work
-# NOTE: if you're using aui, include aui in this required components list.
+#############################################################################
+# Name:        samples/minimal/CMakeListst.txt
+# Purpose:     Sample CMake file to show usage of cmake for wxWidgets users
+# Author:      Tobias Taschner
+# Created:     2016-10-23
+# Copyright:   (c) 2016 wxWidgets development team
+# Licence:     wxWindows licence
+#############################################################################
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS all REQUIRED)
- 
-##---------------------------------------------------
-## Actual config file starts here
-##--------------------------------------------------- 
- 
-# wxWidgets include (this will do all the magic to configure everything)
-include( "${wxWidgets_USE_FILE}" )
+#
+# This file is just a sample to show using cmake from an application
+# If you want to build the minimal and other samples please use the
+# wxBUILD_SAMPLES option when using cmake on the library
+#
 
-# Add source files
-# set(SOURCE_FILES  cApp.cpp )
-set(SOURCE_FILES auth.cpp pdm-service.hpp  cApp.cpp cc20_multi.cpp cMain.cpp pdmFile.cpp)
+# Declare the minimum required CMake version
+cmake_minimum_required(VERSION 2.8.12)
 
-# If we build for windows systems, we also include the resource file
-# containing the manifest, icon and other resources
+if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    # If no deployment target has been set default to the minimum supported
+    # OS version (this has to be set before the first project() call)
+    if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0 CACHE STRING "iOS Deployment Target")
+    else()
+        set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10 CACHE STRING "macOS Deployment Target")
+    endif()
+endif()
+
+# Name the project
+project(pdm)
+
+# Request the required wxWidgets libs
+find_package(wxWidgets 3.1 COMPONENTS all REQUIRED)
+
+# Include the wxWidgets use file to initialize various settings
+include(${wxWidgets_USE_FILE})
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D MAC_OS -D LINUX -pthread")
+
+# Define a variable containing a list of source files for the project
+set(SRC_FILES
+        auth.cpp pdm-service.hpp  cApp.cpp cc20_multi.cpp cMain.cpp pdmFile.cpp
+        Tree_Ctrl.cpp Tree_Ctrl.h)
+
 if(WIN32)
- set(SOURCE_FILES ${SOURCE_FILES} )
-endif(WIN32)
+    # Include a RC file for windows
+    list(APPEND SRC_FILES ../sample.rc)
+elseif(APPLE)
+    # Add an icon for the apple .app file
+    list(APPEND SRC_FILES ./logonight.icns)
+endif()
 
-# the above paths and defines will be used in this build
-add_executable(${CMAKE_PROJECT_NAME} WIN32 ${SOURCE_FILES})
+# Define the build target for the executable
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SRC_FILES})
+# Link required libraries to the executable
+target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 
-# Add to forty to the wxWidgets libraries. These are
-# set for  by the find script. Other needed libraries can be added here
-target_link_libraries(${CMAKE_PROJECT_NAME} ${wxWidgets_LIBRARIES})
+if(APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        RESOURCE ".logonight.icns"
+        MACOSX_BUNDLE_ICON_FILE logonight.icns
+        MACOSX_BUNDLE_COPYRIGHT "Copyright Yang Yi"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.wxwidgets.pdm"
+        )
+endif()

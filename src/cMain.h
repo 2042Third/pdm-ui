@@ -6,6 +6,8 @@
 #endif
 //#include "pdmFile.h"
 //#include "cApp.h"
+#include "Tree_Ctrl.h"
+#include <vector>
 #include "cc20_multi.h"
 #include <iostream>
 #include <wx/artprov.h>
@@ -35,74 +37,12 @@
 //#include <wx/richtext/richtextbuffer.h>
 // #define wxUSE_DRAG_AND_DROP = 1
 
-class DnDFile : public wxFileDropTarget
-{
-public:
-    DnDFile(wxRichTextCtrl *pOwner = NULL) { m_pOwner = pOwner; }
-
-    virtual bool OnDropFiles(wxCoord x, wxCoord y,
-                             const wxArrayString& filenames) wxOVERRIDE;
-
-private:
-    wxRichTextCtrl *m_pOwner;
-};
-
-class Tree_Data : public wxTreeItemData
-{
-public:
-    Tree_Data(const wxString& desc) : m_desc(desc) { }
-
-    void ShowInfo(wxTreeCtrl *tree);
-    wxString const& GetDesc() const { return m_desc; }
-
-private:
-    wxString m_desc;
-};
-
-class Tree_Ctrl : public wxTreeCtrl
-{
-public:
-	enum{
-		Tree_Ctrl_Icon_Files,
-		Tree_Ctrl_Icon_Folder
-	};
-
-	Tree_Ctrl(){m_alternateImages = false; m_alternateStates = false;}
-	Tree_Ctrl (wxWindow * parent, const wxWindowID id,
-               const wxPoint& pos, const wxSize& size,
-               long style);
-	~Tree_Ctrl(){}
 
 
-    void OnItemExpanded(wxTreeEvent& event);
-    void OnItemExpanding(wxTreeEvent& event);
-    void OnItemCollapsed(wxTreeEvent& event);
-    void OnItemCollapsing(wxTreeEvent& event);
-
-	void SetAlternateImages(bool show) { m_alternateImages = show; }
-    bool AlternateImages() const { return m_alternateImages; }
-
-    void SetAlternateStates(bool show) { m_alternateStates = show; }
-    bool AlternateStates() const { return m_alternateStates; }
-
-private:
-	void AddTestItemsToTree(size_t numChildren,
-                                    size_t depth);
-	void AddItemsRecursively(const wxTreeItemId& idParent,
-                                     size_t numChildren,
-                                     size_t depth,
-                                     size_t folder);
-	void LogEvent(const wxString& name, const wxTreeEvent& event);
-	wxDECLARE_DYNAMIC_CLASS(Tree_Ctrl);
-    wxDECLARE_EVENT_TABLE();
-	
-	bool         m_alternateImages;
-    bool         m_alternateStates;
-};
 
 class cMain : public wxFrame
 {
-	
+
 public:
 	//cMain(const wxString& title, const wxSize& size);
 	cMain(wxWindow* parent,
@@ -121,7 +61,7 @@ public:
 	wxString CurrentDocPath;
 	// Var
 	wxSize size = wxGetDisplaySize();
-	wxRichTextAttr attr;
+	wxRichTextAttr attr ;
 
 
 	// Menu&Bar
@@ -138,13 +78,16 @@ public:
 	wxStaticBox* pane_auth = nullptr;
 	wxRichTextCtrl* pane_files = nullptr;
 	wxRichTextCtrl* pane_usrspc = nullptr;
-	wxBoxSizer* pane_sizer = nullptr;
+//	wxTextCtrl* pane_usrspc;
+  wxBoxSizer* pane_sizer = nullptr;
+  wxBoxSizer* passwd_sizer = nullptr;
 	wxBoxSizer* pane_files_sizer = nullptr;
 	wxStaticText* txt = nullptr;
+	wxTextCtrl* usr_enter;
 
 	 
 	// Border Val
-	int size_border_ver = 7;
+	int size_border_ver = 20;
 	int size_border_hor = 20;
 
 
@@ -158,13 +101,23 @@ public:
 	void OneKeyEnter(wxCommandEvent& event);
 	void OnFont();
 	void Resize();
+	void cMainOnFile(wxUpdateUIEvent &event);
 	
 	// Decrypted tree
 	void create_dec_tree();
 private:
+  wxStaticText* pswd_text;
+    std::string pswd="";
+    wxTreeItemId root_man;
+    long style = wxTR_DEFAULT_STYLE |
+                      #ifndef NO_VARIABLE_HEIGHT
+                      wxTR_HAS_VARIABLE_ROW_HEIGHT |
+                      #endif
+                      wxTR_EDIT_LABELS;
 	wxString fileText = _T("请将需要加密的文件拖入此窗口");
 	// void OnDropFiles(wxDropFilesEvent& event);
 	void maintain_theme();
+    Tree_Ctrl::DnDFile *d_target;
 
 	// Decrypted tree control
 	void tree_creator(long style);
@@ -176,7 +129,5 @@ private:
 };
 
 
-enum{
-	Dec_Tree = 1000
-};
+
 
