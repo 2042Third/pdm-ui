@@ -40,7 +40,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D MAC_OS -D LINUX -pthread")
 
 # Define a variable containing a list of source files for the project
 set(SRC_FILES
-        auth.cpp pdm-service.hpp  cApp.cpp cc20_multi.cpp cMain.cpp pdmFile.cpp
+        auth.cpp pdm-service.hpp  cApp.cpp  cMain.cpp pdmFile.cpp
         Tree_Ctrl.cpp Tree_Ctrl.h)
 
 if(WIN32)

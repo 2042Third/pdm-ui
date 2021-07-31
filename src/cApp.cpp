@@ -19,10 +19,10 @@ bool cApp::OnInit()
 	if ( !wxApp::OnInit() )
         return false;
 
-	wxSize size = wxGetDisplaySize();
-	size.Scale(0.5, 0.7);
+	wxSize size=wxGetDisplaySize();
+	size.Scale(0.7, 0.9);
 
-	cMain * cmain = new cMain(nullptr, window::id::MAINWINDOW, _("pdm - version 0.1"), wxDefaultPosition,size, wxDEFAULT_FRAME_STYLE, wxASCII_STR(wxFrameNameStr));
-	cmain->Show(true);
+	panel_main = new cMain(nullptr, window::id::MAINWINDOW, _("pdm - version 0.1"), wxDefaultPosition,size, wxDEFAULT_FRAME_STYLE, wxASCII_STR(wxFrameNameStr));
+	panel_main->Show(true);
 	return true;
 }

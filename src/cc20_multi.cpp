@@ -8,11 +8,12 @@ author:     Yi Yang
             5/2021
 */
 
-
+#ifndef CC20_MULTI_CPP
+#define CC20_MULTI_CPP
 
 #include "cc20_dev.cpp"
 #include "cc20_multi.h"
-#include "../lib/sha3.cpp"
+#include "sha3.cpp"
 #include <thread>
 #include <numeric>
 #include <unistd.h>
@@ -35,7 +36,7 @@ const int BLOCK_SIZE = 4608000;
                                  115200, 256000, 576000, 1152000,2304000,4608000,6912000,9216000 ...
                                  Block size*/
 
-const int THREAD_COUNT = 30; // Make sure to change the header file's too.
+const int THREAD_COUNT = 20; // Make sure to change the header file's too.
 
 const int PER_THREAD_BACK_LOG = 0; // This is not enabled.
 
@@ -50,7 +51,7 @@ char *linew; // Tracks all the input
 
 int progress_bar[THREAD_COUNT];
 
-int DISPLAY_PROG =1;
+int DISPLAY_PROG =0;
 
 long int arg_track[THREAD_COUNT][6];
 /* Passes arguments into threads.
@@ -193,45 +194,32 @@ void Cc20::encr(uint8_t*line,uint8_t*linew,unsigned long int fsize) {
 
 */
 
-void Cc20::rd_file_encr(const std::string file_name, string oufile_name) {
-  std::vector < uint8_t > content;
+void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
+//  std::vector < uint8_t > content;
   unsigned long int n = 0;
-
-  struct stat sb;
-  long int fd;
+  hashing = SHA3();
   uint8_t * data;
-  uint8_t * line; 
-  fd = open(file_name.data(), O_RDONLY); // Reading file
-  if (fd == -1) {
-    perror("Cannot open file ");
-    cout << file_name << " ";
-    exit(1);
-  }
-
-
-  fstat(fd, & sb);
-
-  #ifdef VERBOSE
-  cout << "Staring file size " << sb.st_size << endl;
-  #endif
-  linew = new char[sb.st_size];
-  data = (uint8_t * )(mmap( 0, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
+  uint8_t * line;
+  cout<<"input length: "<<input_length<<endl;
+  if(!DE)data = buf;
+  else data = (uint8_t*)buf+12;
   line = data;
   long int tn = 0;
-  n = sb.st_size;
-  unsigned int ttn = sb.st_size;
+  n = input_length;
+  unsigned int ttn = input_length;
   uint32_t count = 0;
   for (long int i = 0; i < THREAD_COUNT; i++) {
     writing_track[i] = 0;
   }
+//  cout<<"pos2"<<endl;
   long int tracker = 0;
   long int np = 0, tmpn = np % THREAD_COUNT;
-  
+  linew=(char*)outstr+12;
 //  #ifdef DE
   if(DE){
-      ttn-=12;
-
-      line=line+12;
+    std::cout<<"Decryption selected"<<endl;
+    ttn-=12;
+    linew=(char*)outstr;
   }
 //  #endif
   thread progress;
@@ -241,20 +229,24 @@ void Cc20::rd_file_encr(const std::string file_name, string oufile_name) {
     }
     progress = thread(display_progress,ttn);
   }
-  
+//  cout<<"pos5"<<endl;
+
   set_thread_arg(np % THREAD_COUNT, (long int)linew, tracker, n, 0, line, count, this);
   threads[np % THREAD_COUNT] = thread(multi_enc_pthrd, tmpn);
   np++;
-  
+//  cout<<"pos6"<<endl;
+
   for (unsigned long int k = 0; k < ((unsigned long int)(ttn / 64) + 1); k++) { // If leak, try add -1
 
     if (n >= 64) {
       tracker += 64;
+//      cout <<n<< "[main] " <<tn<<"np"<<np<< endl;
+
       if (tn % (BLOCK_SIZE) == 0 && (k != 0)) {
         if (threads[np % THREAD_COUNT].joinable()) {
-          #ifdef VERBOSE
-          cout << "[main] Possible join, waiting " <<np % THREAD_COUNT<< endl;
-          #endif
+//          #ifdef VERBOSE
+//          cout << "[main] Possible join, waiting " <<np % THREAD_COUNT<< endl;
+//          #endif
           threads[np % THREAD_COUNT].join();
         }
         set_thread_arg(np % THREAD_COUNT, (long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
@@ -265,9 +257,9 @@ void Cc20::rd_file_encr(const std::string file_name, string oufile_name) {
       }
     } else {
       if (threads[np % THREAD_COUNT].joinable() && final_line_written != 1) {
-          #ifdef VERBOSE
-          cout << "[main] Last Possible join, waiting " <<np % THREAD_COUNT<< endl;
-          #endif
+//          #ifdef VERBOSE
+//          cout << "[main] Last Possible join, waiting " <<np % THREAD_COUNT<< endl;
+//          #endif
         threads[np % THREAD_COUNT].join();
       }
       set_thread_arg(np % THREAD_COUNT, (long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
@@ -277,54 +269,39 @@ void Cc20::rd_file_encr(const std::string file_name, string oufile_name) {
     n -= 64;
     tn += 64;
   }
-  #ifdef VERBOSE
-  cout << "[main] Finished dispatching joining" << endl;
-  #endif
-  
+//  cout << "[main] Finished dispatching joining" << endl;
+
   for (int i = 0; i < THREAD_COUNT; i++) {
-    // cout<<"Trying"<<endl;
+//     cout<<"Trying"<<endl;
     if (threads[i].joinable()){
 
-      // cout << "[main] thread joining "<< i << endl;
-      threads[i].join();
+//       cout << "[main] thread joining "<< i << endl;
+       threads[i].join();
 
     }
   }
+//  cout << "[main] finished joining" << endl;
+
   if (ENABLE_SHA3_OUTPUT){
-    #ifndef DE
-    hashing.add(line,ttn );
-    #else 
-    hashing.add(linew,ttn );
-    #endif // DE
+    if(!DE)
+      hashing.add(line,ttn );
+    else
+      hashing.add(linew,ttn );
   }
-  FILE * oufile;
-  oufile = fopen(oufile_name.data(), "wb");
-  fclose(oufile);
-  oufile = fopen(oufile_name.data(), "ab");
-  #ifndef DE
-  // cout<<"nonce_orig: "<<this->nonce_orig <<endl;
-  fwrite(this->nonce_orig, sizeof(char), 12, oufile);
+//  cout << "[main] finished hash" << endl;
 
-  #else
-
-  #endif
-  fwrite(linew, sizeof(char), ttn, oufile);
-  fclose(oufile);
-
-  #ifdef VERBOSE
-  cout << "[main] Writing thread joined" << endl;
-  #endif
-
-  if (oufile_name == "a") {
-    for (unsigned int i = 0; i < ttn / BLOCK_SIZE + 1; i++) {
-      delete[] outthreads[i];
-    }
-    delete[] outthreads;
+  if(DE){
+    outstr[input_length-12]='\0';
   }
-  delete[] linew;
-  if (munmap(data,ttn)!=0)
-    fprintf(stderr,"Cannot close");
-  close(fd);
+  else {
+    outstr[input_length+12]='\0';
+  }
+
+  if(!DE){
+    for (unsigned int i=0;i<12;i++)
+      outstr[i] = this->nonce_orig[i];
+  }
+  std::cout<<"cc20 Encrypted "<< input_length<<": "<<(char*)outstr<<std::endl;
   if(DISPLAY_PROG){
     if (progress.joinable())
       progress.join();
@@ -387,6 +364,7 @@ void multi_enc_pthrd(int thrd) {
     if (n >= 64) {
       for (long int i = 0; i < 64; i++) {
         linew1[i + tracker] = (char)(line[i + tracker] ^ ptr -> nex[thrd][i]);
+//        linew1[i + tracker] = (char)(line[i + tracker] );
       }
 
       tracker += 64;
@@ -403,15 +381,13 @@ void multi_enc_pthrd(int thrd) {
     } else {
       for (int i = 0; i < n; i++) {
         linew1[i+tracker] = (char)(line[i + tracker] ^ ptr -> nex[thrd][i]);
+//        linew1[i+tracker] = (char)(line[i + tracker]);
       }
       tracker += n;
       writing_track[thrd] = tracker; // Notifies the writing tread when data can be read
       if (msync(linew1, tracker, MS_SYNC) == -1)
       {
       }
-        #ifdef VERBOSE
-        cout<<"[calc] "<<thrd<<" on last lock, size "<<writing_track[thrd]<< endl;
-        #endif
       break;
     }
     count += 1;
@@ -466,81 +442,49 @@ void Cc20::endicha(uint8_t * a, uint32_t * b) {
  * @param nonce the nonce of this encryption
  * 
  * */
-void cmd_enc( string oufile_name){
+void cmd_enc(uint8_t* buf, size_t input_length, uint8_t* outstr , string text_key){
   // cout<<infile_name<<","<<oufile_name<<","<<text_nonce<<"\n"<<endl;
   Bytes cur;
   init_byte_rand_cc20(cur,12);
   string text_nonce = btos(cur);
   Cc20 cry_obj;
-  string text_key;
+//  string text_key;
   Bytes key;
   Bytes nonce;
 
-  // boost::algorithm::trim(infile_name);
-
-  #ifdef __WXOSX__ || __WXGTK__
-  termios oldt;
-  tcgetattr(STDIN_FILENO, & oldt);
-  termios newt = oldt;
-  newt.c_lflag &= ~ECHO;
-  tcsetattr(STDIN_FILENO, TCSANOW, & newt);
-  cout << "Password/密码： " << endl;
-  std::getline(std::cin, text_key);
-  tcsetattr(STDIN_FILENO, TCSANOW, & oldt);
-  cout << endl;
-  #endif
-
-  #ifdef __WXMSW__
-  HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
-  DWORD mode = 0;
-  GetConsoleMode(hStdin, & mode);
-  SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
-  cout << "Password/密码： " << endl;
-  std::getline(std::cin, text_key);
-  #endif
-
-  
   SHA3 key_hash;
-  key_hash.add(stob(text_key).data(),text_key.size());
-  key_hash.add(stob(text_key).data(),text_key.size());
-
+  for (unsigned int i=0;i<2;i++)
+    key_hash.add(stob(text_key).data(),text_key.size());
+  uint8_t line1[13]={0};
   if(DE){
-    uint8_t *line1[13]={0};
-    //    string infile_name_copy = infile_name+".pdm";
-    //    FILE * infile = fopen(infile_name_copy.data(), "rb");
-    //    fread(line1,sizeof(char), 12,infile);
-    //    if(line1!=NULL)
-    //      text_nonce=(char*)line1;
-    //    fclose(infile);
-    //  }
-
-    if (text_nonce.size() != 0) {
-      text_nonce = pad_to_key((string) text_nonce, 12);
-    }
-
-    // Timer
-    auto start = std::chrono::high_resolution_clock::now();
-    cry_obj.set_vals((uint8_t*)text_nonce.data(), (uint8_t *)key_hash.getHash().data());
-
-
-    if(DE){
-      //    cry_obj.rd_file_encr(infile_name,"dec-"+infile_name);
-      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
-    }
-    else {
-      //    cry_obj.rd_file_encr(infile_name, infile_name+".pdm");
-      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
-    }
-    auto end = std::chrono::high_resolution_clock::now();
-    auto dur = end - start;
-    auto i_millis = std::chrono::duration_cast < std::chrono::milliseconds > (dur);
-    auto f_secs = std::chrono::duration_cast < std::chrono::duration < float >> (dur);
-    std::cout << f_secs.count() << '\n';
+    for (unsigned int i=0;i<12;i++)
+      line1[i]=(buf[i]);
+    text_nonce=(char*)line1;
+  }
+  if (text_nonce.size() != 0) {
+    text_nonce = pad_to_key((string) text_nonce, 12);
   }
 
+  // Timer
+  auto start = std::chrono::high_resolution_clock::now();
+  cry_obj.set_vals((uint8_t*)text_nonce.data(), (uint8_t *)key_hash.getHash().data());
 
+  if(DE){
+  cry_obj.rd_file_encr(buf,outstr, input_length);
+//  std::cout<<"pos4 "<<std::endl;
 
-
-
+//      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
+  }
+  else {
+    cry_obj.rd_file_encr(buf, outstr, input_length);
+//      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
+  }
+  auto end = std::chrono::high_resolution_clock::now();
+  auto dur = end - start;
+  auto i_millis = std::chrono::duration_cast < std::chrono::milliseconds > (dur);
+  auto f_secs = std::chrono::duration_cast < std::chrono::duration < float >> (dur);
+  std::cout << f_secs.count() << '\n';
+//  }
 
 }
+#endif

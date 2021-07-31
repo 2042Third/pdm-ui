@@ -59,6 +59,10 @@ public:
 	// File 
 	wxTextCtrl* MainEditBox;
 	wxString CurrentDocPath;
+	wxString CurrentDocPathEnc;
+	wxString CurrentFileName;
+	wxString CurrentFileNameEnc;
+	unsigned long long int CurrentFileSize;
 	// Var
 	wxSize size = wxGetDisplaySize();
 	wxRichTextAttr attr ;
@@ -67,9 +71,15 @@ public:
 	// Menu&Bar
 	wxMenuBar* menu_bar;
 	wxMenu* menu_file;
+	wxMenu* menu_view;
+	wxMenu* menu_pdm;
+	wxMenuItem* pdm_about;
+	wxMenuItem* view_pswd_focus;
+	wxMenuItem* view_usrspc_focus;
 	wxMenuItem* file_open;
 	wxMenuItem* file_save;
 	wxMenuItem* file_about;
+	wxMenuItem* file_new;
 	wxMenuItem* file_save_as;
 	wxMenuItem* file_quit;
 
@@ -81,35 +91,44 @@ public:
 //	wxTextCtrl* pane_usrspc;
   wxBoxSizer* pane_sizer = nullptr;
   wxBoxSizer* passwd_sizer = nullptr;
-	wxBoxSizer* pane_files_sizer = nullptr;
+  wxBoxSizer* pane_files_sizer = nullptr;
+  wxBoxSizer* pane_usrspc_sizer = nullptr;
 	wxStaticText* txt = nullptr;
 	wxTextCtrl* usr_enter;
-
+  wxString pton(wxString& a);
 	 
 	// Border Val
 	int size_border_ver = 20;
 	int size_border_hor = 20;
-
+  //Open
+  void open_enc_file(wxString infile);
 
 	// Event handle
 	void stc_quit(wxCommandEvent& event);
 	void stc_open(wxCommandEvent& event);
 	void stc_save(wxCommandEvent& event);
+	void stc_new(wxCommandEvent& event);
 	void on_close(wxCloseEvent& event);
 	void c_about(wxCommandEvent& event);
 	//void OnSaveAs(wxCommandEvent& event);
 	void OneKeyEnter(wxCommandEvent& event);
 	void OnFont();
 	void Resize();
+	void stc_pswd_focus(wxCommandEvent& event);
+	void stc_usrspc_focus(wxCommandEvent& event);
 	void cMainOnFile(wxUpdateUIEvent &event);
 	
 	// Decrypted tree
 	void create_dec_tree();
 private:
   wxStaticText* pswd_text;
-    std::string pswd="";
-    wxTreeItemId root_man;
-    long style = wxTR_DEFAULT_STYLE |
+  wxStaticText* file_text;
+  char* pswd_data;
+  char* data;
+  char* outstr= nullptr;
+  wxCharBuffer buffer;
+  wxTreeItemId root_man;
+  long style = wxTR_DEFAULT_STYLE |
                       #ifndef NO_VARIABLE_HEIGHT
                       wxTR_HAS_VARIABLE_ROW_HEIGHT |
                       #endif

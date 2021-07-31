@@ -66,9 +66,7 @@ public:
     void OnItemCollapsed(wxTreeEvent& event);
     void OnItemCollapsing(wxTreeEvent& event);
     void addFileToTree(wxString tree_str);
-
-//    static void wxwidgets_disgusting_design_remedy1(){wxwidgets_disgusting_design_remedy2(this);}
-//    static void wxwidgets_disgusting_design_remedy2(Tree_Ctrl my_own_fucking_class){wxwidgets_disgusting_design_remedy2(this);}
+    void OnItemActivated(wxTreeEvent& event);
 
     void SetAlternateImages(bool show) { m_alternateImages = show; }
     bool AlternateImages() const { return m_alternateImages; }
@@ -89,9 +87,10 @@ public:
 
         wxRichTextCtrl *m_pOwner;
     };
+    void set_parent(wxFrame* a){parent=a;}
     void set_d_target(Tree_Ctrl::DnDFile* d){d_target=d;}
     Tree_Ctrl::DnDFile * d_target;
-
+    wxFrame * parent;
 private:
     wxTreeItemId rootId= AddRoot("Root",-1,-1,
                                  new Tree_Data("Root item"));
@@ -114,7 +113,7 @@ private:
 
         void ShowInfo(wxTreeCtrl *tree);
         wxString const& GetDesc() const { return m_desc; }
-    private:
+//    private:
         wxString m_desc;
     };
 };

@@ -30,7 +30,7 @@ public:
 
     void SetShowButtons(bool show) { m_showButtons = show; }
     bool ShowButtons() const { return m_showButtons; }
-
+    wxFrame * panel_main;
 private:
     bool m_showImages, m_showStates, m_showButtons;
 
