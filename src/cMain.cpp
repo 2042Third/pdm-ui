@@ -246,8 +246,8 @@ void cMain::cMainOnFile(wxUpdateUIEvent & event) {
 void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
 	wxFileDialog* OpenDialog = new wxFileDialog(
 		this, _("Choose a file to open"), wxEmptyString, wxEmptyString,
-		_("*"),
-			wxFD_OPEN, wxDefaultPosition, wxSize(300,500));
+		_("*.*"),
+			wxFD_MULTIPLE, wxDefaultPosition, wxSize(300,500));
 
 	// Creates a "open file" dialog with 4 file types
 	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "cancel"
@@ -256,7 +256,7 @@ void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
 		std::cout << "doc dir: " << CurrentDocPath << std::endl;
 		wxMessageBox(CurrentDocPath, CurrentDocPath, wxOK);
 //		maintain_theme();
-		pane_usrspc->LoadFile(CurrentDocPath); //Opens that file
+		pane_usrspc->LoadFile(CurrentDocPath,wxFILE); //Opens that file
 //		maintain_theme();
 //		OnFont();
 
