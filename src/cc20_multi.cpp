@@ -26,7 +26,7 @@ void enc_writing(string oufile_name);
 void enc_writing_nw();
 void multi_enc_pthrd(int thrd);
 void multi_enc_pthrd_nw(int thrd);
-void set_thread_arg(int thrd, long int np,long int tracker,long int n, long int tn,uint8_t* line,uint32_t count, Cc20 * ptr);
+void set_thread_arg(unsigned long int thrd, unsigned long int np,unsigned long int tracker,unsigned long int n, unsigned long int tn,uint8_t* line,uint32_t count, Cc20 * ptr);
        
 
 int ENABLE_SHA3_OUTPUT = 1;
@@ -53,7 +53,7 @@ int progress_bar[THREAD_COUNT];
 
 int DISPLAY_PROG =0;
 
-long int arg_track[THREAD_COUNT][6];
+unsigned long int arg_track[THREAD_COUNT][6];
 /* Passes arguments into threads.
                                        arg_track[THREAD_COUNT][0] ---> Thread number
                                        arg_track[THREAD_COUNT][1] ---> NOT USED
@@ -129,7 +129,7 @@ void Cc20::encr(uint8_t*line,uint8_t*linew,unsigned long int fsize) {
   }
   long int tracker = 0;
   long int np = 0, tmpn = np % THREAD_COUNT;
-  set_thread_arg(np % THREAD_COUNT, (long int)linew, tracker, n, 0, line, count, this);
+  set_thread_arg(np % THREAD_COUNT, (unsigned long int)linew, tracker, n, 0, line, count, this);
   threads[np % THREAD_COUNT] = thread(multi_enc_pthrd, tmpn);
   np++;
   
@@ -144,7 +144,7 @@ void Cc20::encr(uint8_t*line,uint8_t*linew,unsigned long int fsize) {
           #endif
           threads[np % THREAD_COUNT].join();
         }
-        set_thread_arg(np % THREAD_COUNT, (long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
+        set_thread_arg(np % THREAD_COUNT, (unsigned long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
         threads[np % THREAD_COUNT] = thread(multi_enc_pthrd, np % THREAD_COUNT);
 
         tracker = 0;
@@ -157,7 +157,7 @@ void Cc20::encr(uint8_t*line,uint8_t*linew,unsigned long int fsize) {
           #endif
         threads[np % THREAD_COUNT].join();
       }
-      set_thread_arg(np % THREAD_COUNT, (long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
+      set_thread_arg(np % THREAD_COUNT, (unsigned long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
       threads[np % THREAD_COUNT] = thread(multi_enc_pthrd, np % THREAD_COUNT);
     }
     count += 1;
@@ -200,7 +200,7 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
   hashing = SHA3();
   uint8_t * data;
   uint8_t * line;
-  cout<<"input length: "<<input_length<<endl;
+//  cout<<"input length: "<<input_length<<endl;
   if(!DE)data = buf;
   else data = (uint8_t*)buf+12;
   line = data;
@@ -208,8 +208,8 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
   n = input_length;
   unsigned int ttn = input_length;
   uint32_t count = 0;
-  for (long int i = 0; i < THREAD_COUNT; i++) {
-    writing_track[i] = 0;
+  for (long & writingTrack : writing_track) {
+    writingTrack = 0;
   }
 //  cout<<"pos2"<<endl;
   long int tracker = 0;
@@ -217,21 +217,21 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
   linew=(char*)outstr+12;
 //  #ifdef DE
   if(DE){
-    std::cout<<"Decryption selected"<<endl;
+//    std::cout<<"Decryption selected"<<endl;
     ttn-=12;
     linew=(char*)outstr;
   }
 //  #endif
   thread progress;
   if (DISPLAY_PROG){
-    for (unsigned int i=0; i<THREAD_COUNT;i++){
-      progress_bar[i] = 0;
+    for (int & bar : progress_bar){
+      bar = 0;
     }
     progress = thread(display_progress,ttn);
   }
 //  cout<<"pos5"<<endl;
 
-  set_thread_arg(np % THREAD_COUNT, (long int)linew, tracker, n, 0, line, count, this);
+  set_thread_arg(np % THREAD_COUNT, (unsigned long int)linew, tracker, n, 0, line, count, this);
   threads[np % THREAD_COUNT] = thread(multi_enc_pthrd, tmpn);
   np++;
 //  cout<<"pos6"<<endl;
@@ -249,7 +249,7 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
 //          #endif
           threads[np % THREAD_COUNT].join();
         }
-        set_thread_arg(np % THREAD_COUNT, (long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
+        set_thread_arg(np % THREAD_COUNT, (unsigned long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
         threads[np % THREAD_COUNT] = thread(multi_enc_pthrd, np % THREAD_COUNT);
 
         tracker = 0;
@@ -262,7 +262,7 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
 //          #endif
         threads[np % THREAD_COUNT].join();
       }
-      set_thread_arg(np % THREAD_COUNT, (long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
+      set_thread_arg(np % THREAD_COUNT, (unsigned long int)linew+tn, tracker, n, tn, line + tn, count + 1, this);
       threads[np % THREAD_COUNT] = thread(multi_enc_pthrd, np % THREAD_COUNT);
     }
     count += 1;
@@ -301,7 +301,7 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
     for (unsigned int i=0;i<12;i++)
       outstr[i] = this->nonce_orig[i];
   }
-  std::cout<<"cc20 Encrypted "<< input_length<<": "<<(char*)outstr<<std::endl;
+//  std::cout<<"cc20 Encrypted "<< input_length<<": "<<(char*)outstr<<std::endl;
   if(DISPLAY_PROG){
     if (progress.joinable())
       progress.join();
@@ -334,7 +334,7 @@ void display_progress(unsigned int n) {
 
 */
 
-void set_thread_arg(int thrd, long int linew1, long int tracker, long int n, long int tn, uint8_t * line, uint32_t count, Cc20 * ptr) {
+void set_thread_arg(unsigned long int thrd, unsigned long int linew1, unsigned long int tracker, unsigned long int n, unsigned long int tn, uint8_t * line, uint32_t count, Cc20 * ptr) {
   arg_track[thrd][0] = thrd;
   arg_track[thrd][1] = linew1; 
   arg_track[thrd][2] = tracker; 
@@ -347,8 +347,8 @@ void set_thread_arg(int thrd, long int linew1, long int tracker, long int n, lon
 
 void multi_enc_pthrd(int thrd) {
   uint8_t * linew1 = (uint8_t*)arg_track[thrd][1]; // Set but not used
-  long int tracker = 0; // Used
-  long int n = arg_track[thrd][3]; // Used 
+  unsigned long int tracker = 0; // Used
+  unsigned long int n = arg_track[thrd][3]; // Used
   uint8_t * line = arg_line[thrd]; // Used
   uint32_t count = arg_count[thrd]; // Used 
   Cc20 * ptr = arg_ptr[thrd];
@@ -362,7 +362,7 @@ void multi_enc_pthrd(int thrd) {
       cout<<"[calc] "<<thrd<<" 1 iteration, current size "<<n << endl;
     #endif
     if (n >= 64) {
-      for (long int i = 0; i < 64; i++) {
+      for (unsigned long int i = 0; i < 64; i++) {
         linew1[i + tracker] = (char)(line[i + tracker] ^ ptr -> nex[thrd][i]);
 //        linew1[i + tracker] = (char)(line[i + tracker] );
       }
@@ -379,7 +379,7 @@ void multi_enc_pthrd(int thrd) {
         #endif
       }
     } else {
-      for (int i = 0; i < n; i++) {
+      for (unsigned int i = 0; i < n; i++) {
         linew1[i+tracker] = (char)(line[i + tracker] ^ ptr -> nex[thrd][i]);
 //        linew1[i+tracker] = (char)(line[i + tracker]);
       }
@@ -470,12 +470,13 @@ void cmd_enc(uint8_t* buf, size_t input_length, uint8_t* outstr , string text_ke
   cry_obj.set_vals((uint8_t*)text_nonce.data(), (uint8_t *)key_hash.getHash().data());
 
   if(DE){
-  cry_obj.rd_file_encr(buf,outstr, input_length);
-//  std::cout<<"pos4 "<<std::endl;
+    std::cout<<"Decryption message received "<<std::endl;
+    cry_obj.rd_file_encr(buf,outstr, input_length);
 
 //      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
   }
   else {
+    std::cout<<"Encryption message received "<<std::endl;
     cry_obj.rd_file_encr(buf, outstr, input_length);
 //      if (ENABLE_SHA3_OUTPUT) cout <<"SHA3: \""<<hashing.getHash()<<"\""<<endl;
   }
@@ -483,7 +484,7 @@ void cmd_enc(uint8_t* buf, size_t input_length, uint8_t* outstr , string text_ke
   auto dur = end - start;
   auto i_millis = std::chrono::duration_cast < std::chrono::milliseconds > (dur);
   auto f_secs = std::chrono::duration_cast < std::chrono::duration < float >> (dur);
-  std::cout << f_secs.count() << '\n';
+//  std::cout << f_secs.count() << '\n';
 //  }
 
 }

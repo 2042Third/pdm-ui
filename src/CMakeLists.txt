@@ -30,13 +30,13 @@ endif()
 project(pdm)
 
 # Request the required wxWidgets libs
-find_package(wxWidgets 3.1 COMPONENTS all REQUIRED)
+find_package(wxWidgets 3.0 COMPONENTS all REQUIRED)
 
 # Include the wxWidgets use file to initialize various settings
 include(${wxWidgets_USE_FILE})
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D MAC_OS -D LINUX -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -O2 -D MAC_OS -D LINUX -pthread")
 
 # Define a variable containing a list of source files for the project
 set(SRC_FILES
@@ -61,6 +61,6 @@ if(APPLE)
         RESOURCE ".logonight.icns"
         MACOSX_BUNDLE_ICON_FILE logonight.icns
         MACOSX_BUNDLE_COPYRIGHT "Copyright Yang Yi"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "org.wxwidgets.pdm"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.dryangyi.pdm"
         )
 endif()

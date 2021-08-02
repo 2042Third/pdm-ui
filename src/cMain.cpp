@@ -4,11 +4,11 @@
 #include "Tree_Ctrl.h"
 #include <wx/richtext/richtextbuffer.h>
 #include <vector>
+#include <string>
 #include "wx/numdlg.h"
 #include <wx/dir.h>
 #include <wx/arrstr.h>
 #include <iostream>
-#include "wx/artprov.h"
 #include "wx/image.h"
 #include "wx/treectrl.h"
 #include "wx/math.h"
@@ -34,6 +34,7 @@ wxBEGIN_EVENT_TABLE(cMain, wxFrame)
   EVT_MENU((wxStandardID)window::id::FOCUS_PSWD, cMain::stc_pswd_focus)
   EVT_MENU((wxStandardID)window::id::FOCUS_USRSPC, cMain::stc_usrspc_focus)
   EVT_MENU(wxID_OPEN, cMain::stc_open)
+  EVT_MENU(wxID_SAVEAS, cMain::stc_save_as)
   EVT_MENU(wxID_NEW, cMain::stc_new)
 	EVT_MENU(wxID_EXIT, cMain::stc_quit)
 	EVT_MENU((wxStandardID)window::id::PDM_ABOUT,cMain::c_about)
@@ -64,9 +65,9 @@ cMain::cMain(wxWindow* parent,
   view_usrspc_focus=new wxMenuItem(menu_view,window::id::FOCUS_USRSPC, wxString(wxT("To &Editor\tCtrl+l")), "Set Focus to editor without using mouse", wxITEM_NORMAL);
 	file_open = new wxMenuItem(menu_file, wxID_OPEN, wxString(wxT("&Open\tCtrl+o")), wxEmptyString, wxITEM_NORMAL);
 	file_save = new wxMenuItem(menu_file, wxID_SAVE, wxString(wxT("&Save")) + wxT('\t') + wxT("Ctrl+s"), wxEmptyString, wxITEM_NORMAL);
-	file_save_as = new wxMenuItem(menu_file, wxID_ANY, wxString(wxT("&Save As")), wxEmptyString, wxITEM_NORMAL);
+	file_save_as = new wxMenuItem(menu_file, wxID_SAVEAS, wxString(wxT("&Save As")), wxEmptyString, wxITEM_NORMAL);
 	file_new = new wxMenuItem(menu_file, wxID_NEW, wxString(wxT("&New\tCtrl+n")), wxEmptyString, wxITEM_NORMAL);
-	pdm_about = new wxMenuItem(menu_file, window::id::PDM_ABOUT,wxString(wxT("&About")),"About PDM",wxITEM_NORMAL);
+	pdm_about = new wxMenuItem(menu_file, window::id::PDM_ABOUT,wxString(wxT("&About")),"About pdm",wxITEM_NORMAL);
 	file_quit = new wxMenuItem(menu_file,wxID_EXIT);
 
 	menu_file->Append(file_open);
@@ -88,7 +89,7 @@ cMain::cMain(wxWindow* parent,
 
 	panel->SetMinSize(GetBestSize());
 	pane_sizer = new wxBoxSizer(4);
-	SetMenuBar(menu_bar);
+	this->SetMenuBar(menu_bar);
 	pane_sizer->SetMinSize(GetBestSize());
 
 	txt = new wxStaticText(panel, wxID_ANY, wxT("Encrypted Files"));
@@ -112,15 +113,15 @@ cMain::cMain(wxWindow* parent,
                              "密码");
 	passwd_sizer->Add(pswd_text, 1,wxALL | wxEXPAND, 0);
 	passwd_sizer->Add(usr_enter,1,wxALL | wxEXPAND,0);
-	pane_files_sizer->Add(txt,-1, wxEXPAND, size_border_hor);
-	pane_files_sizer->Add(tree_ctrl,2, wxALL | wxEXPAND, size_border_hor);
-	pane_files_sizer->Add(passwd_sizer,-1,wxALL|wxALIGN_LEFT,size_border_hor);
-	pane_files_sizer->Add(pane_files,3, wxALL | wxEXPAND, size_border_hor);
+	pane_files_sizer->Add(txt,-1, wxEXPAND, 1);
+	pane_files_sizer->Add(tree_ctrl,2, wxALL | wxEXPAND, 1);
+	pane_files_sizer->Add(passwd_sizer,-1,wxALL|wxALIGN_LEFT,1);
+	pane_files_sizer->Add(pane_files,3, wxALL | wxEXPAND, 1);
 	pane_usrspc_sizer->Add(file_text);
-	pane_usrspc_sizer->Add(pane_usrspc,-1, wxALL|wxEXPAND, size_border_hor);
+	pane_usrspc_sizer->Add(pane_usrspc,-1, wxALL|wxEXPAND, 1);
 
-	pane_sizer->Add(pane_files_sizer, 2, wxALL | wxEXPAND, size_border_hor);
-	pane_sizer->Add(pane_usrspc_sizer, 3, wxALL | wxEXPAND, size_border_ver);
+	pane_sizer->Add(pane_files_sizer, 2, wxALL | wxEXPAND, 1);
+	pane_sizer->Add(pane_usrspc_sizer, 3, wxALL | wxEXPAND, 1);
 	panel->SetSizer(pane_sizer);
 
 	d_target =new Tree_Ctrl::DnDFile(pane_files);
@@ -168,52 +169,128 @@ void cMain::tree_creator(long style){
 
 void cMain::Resize()
 {
-    wxSize size = GetClientSize();
+    size = GetClientSize();
     tree_ctrl->SetSize(0, 0, size.x, size.y
     );
 }
 
+/**
+ * Input a Path called infile
+ * */
 void cMain::open_enc_file(wxString infile) {
-//  wxString file_content;
-  char* data ;
-  char* outstr;
+  std::printf("[open_enc_file] Starting operation on file %s\n",infile.mb_str().data());
+  if (infile.size() > 4){
+    if (check_extend(infile))infile = extend_off(infile);
+  }
 
   buffer = usr_enter->GetValue().ToUTF8();
   pswd_data = buffer.data();
-  if (usr_enter->GetValue().size()==0){
-    wxMessageBox("Need password", "Enter a password first, then save.", wxOK);
+  if (usr_enter->GetValue().empty()){
+    wxMessageBox("Need password", "This file is encrypted. \nEnter a password first, then save.", wxOK);
     usr_enter->SetFocus();
     return;
   }
+  if(DEBUG_OUT_PDM)std::printf("Password: %s for file: %s.pdm\n",pswd_data,(char*)infile.mb_str().data());
   wxFile file1( infile+".pdm", wxFile::read );
   size_t file_len = file1.Length();
+  if(file_len ==-1)return;
 
-  if(data!= nullptr){
+  if(data_alloc){
     delete[] data;
-  }
-  data = new char[file_len+1];
-  file1.Read(data,file_len);
-  file1.Close();
-  std::printf("OF file %s \nsize: %lld\n",data,file_len);
-
-  if(outstr!= nullptr){
     delete[] outstr;
   }
+  data = new char[file_len+1];
   outstr=new char[file_len+1];
+  data_alloc=1;
+  file1.Read(data,file_len);
+  file1.Close();
+//  std::printf("OF file %s \nsize: %zu\n",data,file_len);
 
   CurrentFileName=pton(infile);
   CurrentDocPath=infile;
   CurrentFileSize=file_len;
   CurrentFileNameEnc=CurrentFileName+".pdm";
   CurrentDocPathEnc=CurrentDocPath+".pdm";
-  tree_ctrl->d_target->m_pOwner->WriteText(_("Open: "));
+  tree_ctrl->d_target->m_pOwner->WriteText(_("Open Encrypted: "));
   tree_ctrl->d_target->m_pOwner->WriteText(infile+"\n");
-  file_text->SetLabel(CurrentFileName);
+  update_file_label(CurrentFileName,1,0);
 
   DE = 1;
   cmd_enc((uint8_t*)data,(size_t)CurrentFileSize,(uint8_t*)outstr,((std::string)pswd_data));
   pane_usrspc->Clear();
   pane_usrspc->WriteText(outstr);
+
+}
+
+
+/**
+ * Input a Path called infile
+ * */
+void cMain::open_file(wxString infile) {
+  CurrentFileName= pton(infile);
+  CurrentDocPath = infile;
+
+  pane_usrspc->LoadFile(CurrentDocPath,wxFILE); //Opens that file
+  update_file_label(CurrentFileName,0,0);
+}
+
+void cMain::stc_save_as(wxCommandEvent& event){
+  std::printf("[stc_save_as] Starting operation\n");
+  CurrentDocPath="";
+  CurrentFileName="New_File";
+  wxRichTextBuffer bff = pane_usrspc->GetBuffer();
+  wxMemoryOutputStream stream;
+  bff.SaveFile(stream,wxRICHTEXT_TYPE_TEXT);
+  if(data_alloc){
+    delete[] data;
+    delete[] outstr;
+  }
+  data = new char[stream.GetSize() + 1];
+  outstr = new char[stream.GetSize()+13];
+  data_alloc=1;
+
+  buffer = usr_enter->GetValue().ToUTF8();
+  pswd_data = buffer.data();
+  stream.CopyTo(data, stream.GetSize());
+  data[stream.GetSize()]='\0';
+  if (usr_enter->GetValue().empty()){
+    wxMessageBox("Need password", "Enter a password first, then save.", wxOK);
+    stc_pswd_focus(event);
+    return;
+  }
+  std::cout<<"Captured text of size "<<stream.GetSize()<<": "<<data<<std::endl;
+  std::cout<<"Password: "<<pswd_data<<std::endl;
+  CurrentFileSize=stream.GetSize()+12;
+  DE = 0;
+  cmd_enc((uint8_t*)data,(size_t)stream.GetSize(),(uint8_t*)outstr,((std::string)pswd_data));
+
+
+  auto* OpenDialog = new wxFileDialog(
+      this, _("Save As file"), wxEmptyString, CurrentFileName,
+      _("*"),
+      wxFD_SAVE, wxDefaultPosition, wxSize(300,500));
+
+  if (OpenDialog->ShowModal() == wxID_OK ) // if the user click "Open" instead of "cancel"
+    {
+    CurrentFileName= OpenDialog->GetFilename();
+    CurrentDocPath = OpenDialog->GetPath();
+    std::cout << "doc dir: " << CurrentDocPath << std::endl;
+
+    CurrentFileNameEnc=CurrentFileName+".pdm";
+    CurrentDocPathEnc=CurrentDocPath+".pdm";
+
+    wxFile file( CurrentDocPathEnc, wxFile::write );
+    if( file.IsOpened() )
+    {
+      file.Write(outstr,CurrentFileSize);
+      file.Close();
+    }
+    tree_ctrl->d_target->m_pOwner->WriteText(_("saved "));
+    tree_ctrl->d_target->m_pOwner->WriteText(CurrentFileName+" as "+CurrentFileNameEnc+"\n");
+    update_file_label(CurrentFileName,1,0);
+    tree_ctrl->addFileToTree(CurrentDocPath);
+    }
+  OpenDialog->Destroy();
 }
 
 void cMain::c_about(wxCommandEvent& WXUNUSED(event))
@@ -234,7 +311,7 @@ void cMain::stc_new(wxCommandEvent& event) {
   CurrentDocPath="";
   CurrentFileName="";
   CurrentFileSize=0;
-  file_text->SetLabel(_("New_File"));
+  update_file_label("New_File",0,0);
   pane_usrspc->Clear();
   stc_usrspc_focus(event);
 
@@ -278,7 +355,9 @@ void cMain::cMainOnFile(wxUpdateUIEvent & event) {
 }
 
 void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
-	wxFileDialog* OpenDialog = new wxFileDialog(
+  std::printf("[stc_open] Starting operation\n");
+
+	auto* OpenDialog = new wxFileDialog(
 		this, _("Choose a file to open"), wxEmptyString, wxEmptyString,
 		_("*"),
 			wxFD_OPEN, wxDefaultPosition, wxSize(300,500));
@@ -286,12 +365,23 @@ void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
 	// Creates a "open file" dialog with 4 file types
 	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "cancel"
 	{
-	  CurrentFileName= OpenDialog->GetFilename();
-		CurrentDocPath = OpenDialog->GetPath();
-		std::cout << "doc dir: " << CurrentDocPath << std::endl;
+
+	  std::cout << "doc dir: " << OpenDialog->GetPath() << std::endl;
+	  if (OpenDialog->GetPath().size() > 4)
+	    if(check_extend(OpenDialog->GetPath()))
+		  {
+	      open_enc_file(OpenDialog->GetPath());
+
+//        tree_ctrl->addFileToTree(CurrentDocPath);
+		    return;
+		  }
+		CurrentFileName= OpenDialog->GetFilename();
+		  CurrentDocPath = OpenDialog->GetPath();
+
 		pane_usrspc->LoadFile(CurrentDocPath,wxFILE); //Opens that file
-    file_text->SetLabel(CurrentFileName);
+    update_file_label(CurrentFileName,0,0);
 	}
+	OpenDialog->Destroy();
 }
 
 void cMain::OnFont()
@@ -301,39 +391,43 @@ void cMain::OnFont()
 	pane_files->SetBasicStyle(attr);
 }
 
-void cMain::stc_pswd_focus(wxCommandEvent& event) {
+void cMain::stc_pswd_focus(wxCommandEvent& event)  {
   usr_enter->SetFocus();
 }
-void cMain::stc_usrspc_focus(wxCommandEvent& event) {
+void cMain::stc_usrspc_focus(wxCommandEvent& event)  {
   pane_usrspc->SetFocus();
 }
 
 void cMain::stc_save(wxCommandEvent& event) {
+  std::printf("[stc_save] Starting operation\n");
+
   wxRichTextBuffer bff = pane_usrspc->GetBuffer();
   wxMemoryOutputStream stream;
   bff.SaveFile(stream,wxRICHTEXT_TYPE_TEXT);
+  if(data_alloc){
+    delete[] data;
+    delete[] outstr;
+  }
   data = new char[stream.GetSize() + 1];
+  outstr = new char[stream.GetSize()+13];
+  data_alloc=1;
 
   buffer = usr_enter->GetValue().ToUTF8();
   pswd_data = buffer.data();
   stream.CopyTo(data, stream.GetSize());
   data[stream.GetSize()]='\0';
-  if (usr_enter->GetValue().size()==0){
+  if (usr_enter->GetValue().empty()){
     wxMessageBox("Need password", "Enter a password first, then save.", wxOK);
     stc_pswd_focus(event);
     return;
   }
-  std::cout<<"Captured text of size "<<stream.GetSize()<<": "<<data<<std::endl;
+//  std::cout<<"Captured text of size "<<stream.GetSize()<<": "<<data<<std::endl;
   std::cout<<"Password: "<<pswd_data<<std::endl;
   CurrentFileSize=stream.GetSize()+12;
-  if(outstr!= nullptr){
-    delete[] outstr;
-  }
-  outstr = new char[stream.GetSize()+13];
   DE = 0;
   cmd_enc((uint8_t*)data,(size_t)stream.GetSize(),(uint8_t*)outstr,((std::string)pswd_data));
 
-  if (CurrentFileName.size()!=0){
+  if (!CurrentFileName.empty()){
     std::cout << "doc dir: " << CurrentDocPath << std::endl;
 
     CurrentFileNameEnc=CurrentFileName+".pdm";
@@ -348,12 +442,12 @@ void cMain::stc_save(wxCommandEvent& event) {
     }
     tree_ctrl->d_target->m_pOwner->WriteText(_("Successfully saved "));
     tree_ctrl->d_target->m_pOwner->WriteText(CurrentFileName+" as "+CurrentFileNameEnc+"\n");
-    file_text->SetLabel(CurrentFileName);
+    update_file_label(CurrentFileName,1,0);
     tree_ctrl->addFileToTree(CurrentDocPath);
     return;
   }
 
-  wxFileDialog* OpenDialog = new wxFileDialog(
+  auto* OpenDialog = new wxFileDialog(
       this, _("Save file"), wxEmptyString, CurrentFileName,
       _("*"),
       wxFD_SAVE, wxDefaultPosition, wxSize(300,500));
@@ -374,24 +468,51 @@ void cMain::stc_save(wxCommandEvent& event) {
     }
     tree_ctrl->d_target->m_pOwner->WriteText(_("Successfully saved "));
     tree_ctrl->d_target->m_pOwner->WriteText(CurrentFileName+" as "+CurrentFileNameEnc+"\n");
-    file_text->SetLabel(CurrentFileName);
+    update_file_label(CurrentFileName,1,0);
     tree_ctrl->addFileToTree(CurrentDocPath);
     }
-
+  OpenDialog->Destroy();
 
 }
+void cMain::update_file_label(wxString a, int b,int c){
+
+  if (b){
+    file_text->SetLabel(a+" [Encrypted]");
+  }
+  else {
+    file_text->SetLabel(a+" [Not Encrypted]");
+  }
+}
+int cMain::check_extend(wxString a){
+  std::string infile_name = (char*)a.mb_str().data();
+//  infile_name = infile_name+".pdm";
+  if(infile_name.compare(infile_name.size()-4,4,".pdm")==0){
+    std::cout<<"It is has \".pdm\""<<std::endl;
+    return 1;
+  }
+  return 0;
+}
+
+wxString cMain::extend_off(wxString a){
+  return a.Mid(0, a.size() - 4);
+}
+
 wxString cMain::pton(wxString& a){
   return wxFileNameFromPath(a);
 }
 cMain::~cMain()
 {
-  if(outstr!= nullptr){
-    delete[] outstr;
-  }
-  if(data!= nullptr){
-    delete[] data;
-  }
+
+    if (data_alloc)
+    {
+      delete[] data;
+      delete[] outstr;
+      data_alloc=0;
+    }
+
 }
+
+
 
 // ADDED FROM WXWIDGETS MANUAL, Event handle 
 

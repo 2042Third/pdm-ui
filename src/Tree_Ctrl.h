@@ -14,7 +14,8 @@
 #include "wx/wx.h"
 #endif
 //#include "pdmFile.h"
-//#include "cApp.h"
+//#include "cApp.h
+#include <map>
 #include <vector>
 #include <iostream>
 #include <wx/artprov.h>
@@ -65,7 +66,7 @@ public:
     void OnItemExpanding(wxTreeEvent& event);
     void OnItemCollapsed(wxTreeEvent& event);
     void OnItemCollapsing(wxTreeEvent& event);
-    void addFileToTree(wxString tree_str);
+    void addFileToTree(const wxString& tree_str);
     void OnItemActivated(wxTreeEvent& event);
 
     void SetAlternateImages(bool show) { m_alternateImages = show; }
@@ -91,7 +92,11 @@ public:
     void set_d_target(Tree_Ctrl::DnDFile* d){d_target=d;}
     Tree_Ctrl::DnDFile * d_target;
     wxFrame * parent;
+    std::map<size_t,size_t> tree_eles;
+    std::hash<std::string> hasher;
+    std::pair<std::map<size_t,size_t>::iterator,bool> tree_pair;
 private:
+
     wxTreeItemId rootId= AddRoot("Root",-1,-1,
                                  new Tree_Data("Root item"));
     void AddTestItemsToTree(size_t numChildren,

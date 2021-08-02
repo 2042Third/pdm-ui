@@ -422,22 +422,6 @@ wx/object.h
 wx/list.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/list.h
 
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/colordlg.h
-wx/defs.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/defs.h
-wx/colourdata.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/colourdata.h
-wx/msw/colordlg.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/msw/colordlg.h
-wx/osx/colordlg.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/osx/colordlg.h
-wx/gtk/colordlg.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/gtk/colordlg.h
-wx/qt/colordlg.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/qt/colordlg.h
-wx/generic/colrdlgg.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/generic/colrdlgg.h
-
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/colour.h
 wx/defs.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/defs.h
@@ -461,10 +445,6 @@ wx/osx/colour.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/osx/colour.h
 wx/qt/colour.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/qt/colour.h
-
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/colourdata.h
-wx/colour.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/wx/colour.h
 
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/combo.h
 wx/defs.h
@@ -1166,12 +1146,6 @@ wx/dialog.h
 wx/object.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/generic/wx/object.h
 
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/generic/colrdlgg.h
-wx/gdicmn.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/generic/wx/gdicmn.h
-wx/dialog.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/generic/wx/dialog.h
-
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/generic/combo.h
 wx/containr.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/generic/wx/containr.h
@@ -1365,10 +1339,6 @@ wx/generic/accel.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/gtk/chkconf.h
 
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/gtk/choice.h
-
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/gtk/colordlg.h
-wx/dialog.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/gtk/wx/dialog.h
 
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/gtk/colour.h
 
@@ -2346,10 +2316,6 @@ wx/msw/ownerdrawnbutton.h
 
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/msw/choice.h
 
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/msw/colordlg.h
-wx/dialog.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/msw/wx/dialog.h
-
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/msw/colour.h
 wx/object.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/msw/wx/object.h
@@ -2710,10 +2676,6 @@ wx/arrstr.h
 
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/osx/cocoa/chkconf.h
 
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/osx/colordlg.h
-wx/dialog.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/osx/wx/dialog.h
-
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/osx/colour.h
 wx/osx/core/colour.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/osx/wx/osx/core/colour.h
@@ -3037,10 +2999,6 @@ wx/button.h
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/qt/checklst.h
 
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/qt/choice.h
-
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/qt/colordlg.h
-wx/dialog.h
-/Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/qt/wx/dialog.h
 
 /Users/mikeyang/Downloads/wxWidgets-3.1.5/include/wx/qt/colour.h
 
@@ -4529,19 +4487,15 @@ cApp.h
 /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cApp.h
 Tree_Ctrl.h
 /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/Tree_Ctrl.h
-wx/richtext/richtextbuffer.h
--
 vector
 -
-wx/colordlg.h
-/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/colordlg.h
-wx/numdlg.h
-/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/numdlg.h
 wx/dir.h
 -
 wx/arrstr.h
 -
 iostream
+-
+functional
 -
 wx/image.h
 /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/image.h
@@ -4563,6 +4517,8 @@ wx/artprov.h
 -
 wx/wx.h
 /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/wx.h
+map
+-
 vector
 -
 iostream
@@ -4649,6 +4605,8 @@ wx/richtext/richtextbuffer.h
 -
 vector
 -
+string
+-
 wx/numdlg.h
 /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/numdlg.h
 wx/dir.h
@@ -4657,8 +4615,6 @@ wx/arrstr.h
 -
 iostream
 -
-wx/artprov.h
-/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/artprov.h
 wx/image.h
 /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/image.h
 wx/treectrl.h
@@ -4716,8 +4672,6 @@ wx/frame.h
 wx/artprov.h
 -
 wx/xrc/xmlres.h
--
-wx/string.h
 -
 wx/dirctrl.h
 -
@@ -4822,6 +4776,36 @@ vector
 iomanip
 -
 iostream
+-
+
+/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmFile.cpp
+pdmFile.h
+/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmFile.h
+
+/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmFile.h
+wx/wxprec.h
+/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/wx/wxprec.h
+wx/artprov.h
+-
+wx/xrc/xmlres.h
+-
+wx/string.h
+-
+wx/dirctrl.h
+-
+wx/gdicmn.h
+-
+wx/font.h
+-
+wx/colour.h
+-
+wx/settings.h
+-
+wx/filepicker.h
+-
+wx/sizer.h
+-
+wx/dialog.h
 -
 
 /Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/sha3.cpp

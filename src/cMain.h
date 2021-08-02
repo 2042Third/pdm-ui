@@ -24,7 +24,6 @@
 #include <wx/frame.h>
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/string.h>
 #include <wx/dirctrl.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -62,7 +61,7 @@ public:
 	wxString CurrentDocPathEnc;
 	wxString CurrentFileName;
 	wxString CurrentFileNameEnc;
-	unsigned long long int CurrentFileSize;
+	size_t CurrentFileSize;
 	// Var
 	wxSize size = wxGetDisplaySize();
 	wxRichTextAttr attr ;
@@ -95,18 +94,21 @@ public:
   wxBoxSizer* pane_usrspc_sizer = nullptr;
 	wxStaticText* txt = nullptr;
 	wxTextCtrl* usr_enter;
-  wxString pton(wxString& a);
+  static wxString pton(wxString& a);
 	 
 	// Border Val
 	int size_border_ver = 20;
 	int size_border_hor = 20;
   //Open
+  int check_extend(wxString a);
   void open_enc_file(wxString infile);
+  void open_file(wxString infile);
 
 	// Event handle
 	void stc_quit(wxCommandEvent& event);
 	void stc_open(wxCommandEvent& event);
 	void stc_save(wxCommandEvent& event);
+	void stc_save_as(wxCommandEvent& event);
 	void stc_new(wxCommandEvent& event);
 	void on_close(wxCloseEvent& event);
 	void c_about(wxCommandEvent& event);
@@ -114,17 +116,21 @@ public:
 	void OneKeyEnter(wxCommandEvent& event);
 	void OnFont();
 	void Resize();
+	void update_file_label(wxString a, int b, int c);
 	void stc_pswd_focus(wxCommandEvent& event);
 	void stc_usrspc_focus(wxCommandEvent& event);
 	void cMainOnFile(wxUpdateUIEvent &event);
+  wxString extend_off(wxString a);
 	
 	// Decrypted tree
 	void create_dec_tree();
 private:
+  int DEBUG_OUT_PDM=1;
   wxStaticText* pswd_text;
   wxStaticText* file_text;
   char* pswd_data;
   char* data;
+  int data_alloc=0;
   char* outstr= nullptr;
   wxCharBuffer buffer;
   wxTreeItemId root_man;

@@ -5,14 +5,12 @@
 #include "cMain.h"
 #include "cApp.h"
 #include "Tree_Ctrl.h"
-#include <wx/richtext/richtextbuffer.h>
 #include <vector>
 // Tree added includes
-#include "wx/colordlg.h"
-#include "wx/numdlg.h"
 #include <wx/dir.h>
 #include <wx/arrstr.h>
 #include <iostream>
+#include <functional>
 #include "wx/image.h"
 #include "wx/treectrl.h"
 #include "wx/math.h"
@@ -36,7 +34,6 @@ Tree_Ctrl::Tree_Ctrl(wxWindow *parent, const wxWindowID id,
         : wxTreeCtrl(parent, id, pos, size, style,wxDefaultValidator, "Decrypted Files")
 {
 
-//    AddTestItemsToTree(NUM_CHILDREN_PER_LEVEL, NUM_LEVELS);
 }
 
 
@@ -48,7 +45,6 @@ void Tree_Ctrl::AddItemsRecursively(const wxTreeItemId& idParent,
     if ( depth > 0 )
     {
         bool hasChildren = depth > 1;
-
         wxString str;
         for ( size_t n = 0; n < numChildren; n++ )
         {
@@ -57,19 +53,13 @@ void Tree_Ctrl::AddItemsRecursively(const wxTreeItemId& idParent,
                 str.Printf("%s child %u", "Folder", unsigned(n + 1));
             else
                 str.Printf("%s child %u.%u", "File", unsigned(folder), unsigned(n + 1));
-
             // here we pass to AppendItem() normal and selected item images (we
             // suppose that selected image follows the normal one in the enum)
             int image, imageSel;
-
                 image = imageSel = -1;
             wxTreeItemId id = AppendItem(idParent, str, image, imageSel,
                                          new Tree_Data(str));
-
                 SetItemState(id, 0);
-
-
-
             AddItemsRecursively(id, numChildren, depth - 1, n + 1);
         }
     }
@@ -81,16 +71,26 @@ void Tree_Ctrl::update_current(){
     size_t nFiles = current_files.GetCount();
     std::cout<<"Able to get to drop"<<std::endl;
 
-    DeleteChildren(rootId);
+//    DeleteChildren(rootId);
     if (current_files.GetCount()==0) return;
     for (unsigned int i =0;i<nFiles;i++){
-        addFileToTree(current_files[i]);
+      if(wxFileExists(current_files[i]))addFileToTree(current_files[i]);
+      else{
+        d_target->m_pOwner->WriteText(current_files[i]);
+        d_target->m_pOwner->WriteText(" is folder or doesn't exist, not added.\n");
+      }
     }
 
 }
 
-void Tree_Ctrl::addFileToTree(wxString tree_str) {
-    if(tree_str.size()==0) return;
+void Tree_Ctrl::addFileToTree(const wxString& tree_str) {
+//    if(tree_str.empty()) return;
+
+    size_t a = hasher((char*)tree_str.mb_str().data());
+    size_t b = hasher((char*)tree_str.mb_str().data());
+    std::cout<<"Hashing "<<a<<std::endl;
+    tree_pair = tree_eles.insert(std::pair<size_t,size_t>(a, b));
+    if( tree_pair.second==false)return;
     std::cout<<"Adding "<<tree_str<<std::endl;
     wxTreeItemId id = AppendItem(rootId, tree_str,-1,
                                  -1,new Tree_Data(tree_str));
@@ -118,11 +118,14 @@ void Tree_Ctrl::OnItemCollapsing(wxTreeEvent& event)
 
 
 void Tree_Ctrl::OnItemActivated(wxTreeEvent& event){
-  wxTreeItemId itemId = event.GetItem();
-  Tree_Data *item = (Tree_Data *)GetItemData(itemId);
-  wxString file_name_copy = item->m_desc;
-  ((cMain*)parent)->open_enc_file(file_name_copy);
+  std::printf("[tree::OnItemActivated] Starting operation\n");
 
+  wxTreeItemId itemId = event.GetItem();
+  auto *item = (Tree_Data *)GetItemData(itemId);
+  wxString file_name_copy = item->m_desc;
+
+  if(wxFileExists(file_name_copy+".pdm"))((cMain*)parent)->open_enc_file(file_name_copy);
+  else ((cMain*)parent)->open_file(file_name_copy);
 
 }
 
@@ -133,7 +136,7 @@ bool Tree_Ctrl::DnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& file
 
     str.Printf( "%d files dropped", (int)nFiles);
 
-    if (m_pOwner != NULL)
+    if (m_pOwner != nullptr)
       m_pOwner->WriteText(_T("\n"));
     if (nFiles > 0) {
         for (size_t i = 0; i < filenames.GetCount(); i++) {
