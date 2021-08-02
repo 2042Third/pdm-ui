@@ -110,7 +110,7 @@ void Cc20::one_block(int thrd, uint32_t count) {
   for (unsigned int i = 0; i < 10; i++) tworounds(folow[thrd]); // 20 rounds
   #endif
   set_conc(cy[thrd], folow[thrd], 16);
-  endicha(this -> nex[thrd], folow[thrd]);
+  endicha(this -> nex[thrd], cy[thrd]);
 }
 
 /*
@@ -236,7 +236,7 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
   np++;
 //  cout<<"pos6"<<endl;
 
-  for (unsigned long int k = 0; k < ((unsigned long int)(ttn / 64) + 1); k++) { // If leak, try add -1
+  for (unsigned long int k = 0; k < ((unsigned long int)(ttn / 64) + 0); k++) { // If leak, try add -1
 
     if (n >= 64) {
       tracker += 64;
@@ -291,7 +291,7 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
 //  cout << "[main] finished hash" << endl;
 
   if(DE){
-    outstr[input_length-12]='\0';
+    outstr[input_length-13]='\0';
   }
   else {
     outstr[input_length+12]='\0';
@@ -301,7 +301,6 @@ void Cc20::rd_file_encr(uint8_t * buf, uint8_t* outstr, size_t input_length) {
     for (unsigned int i=0;i<12;i++)
       outstr[i] = this->nonce_orig[i];
   }
-//  std::cout<<"cc20 Encrypted "<< input_length<<": "<<(char*)outstr<<std::endl;
   if(DISPLAY_PROG){
     if (progress.joinable())
       progress.join();
@@ -423,7 +422,6 @@ void Cc20::set_vals(uint8_t * nonce, uint8_t * key) {
 void Cc20::endicha(uint8_t * a, uint32_t * b) {
   for (unsigned int i = 0; i < 16; i++) {
     U32T8_S(a + 4 * i, b[i]);
-
   }
 }
 

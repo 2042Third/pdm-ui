@@ -47,26 +47,28 @@ unsigned int i=0;
 void stream(uint8_t * key, uint8_t * nonce, uint32_t count,uint8_t*plain,unsigned int len);
 
 #define U32T8_S(p, v)    \
-  {                            \
-    (p)[0] = (v >> 0) & 0xff;  \
-    (p)[1] = (v >> 8) & 0xff;  \
-    (p)[2] = (v >> 16) & 0xff; \
-    (p)[3] = (v >> 24) & 0xff; \
-  }
+{                            \
+(p)[0] = (v ) & 0xff;  \
+(p)[1] = (v >> 8) & 0xff;  \
+(p)[2] = (v >> 16) & 0xff; \
+(p)[3] = (v >> 24) & 0xff; \
+}
 
-#define U8T32_S(p)                              \
-  (((uint32_t)((p)[0])) | ((uint32_t)((p)[1]) << 8) | \
-   ((uint32_t)((p)[2]) << 16) | ((uint32_t)((p)[3]) << 24))
+#define U8T32_S(p) (((uint32_t)((p)[0])) | ((uint32_t)((p)[1]) << 8) | ((uint32_t)((p)[2]) << 16) | ((uint32_t)((p)[3]) << 24))
+
+//#define U8T32_S(p)                              \
+//(((uint32_t)((p)[0])<<24) | ((uint32_t)((p)[1]) << 16) | \
+//((uint32_t)((p)[2]) << 8) | ((uint32_t)((p)[3]) ))
 
 // INT should only be unsigned, no checks here.
 template <typename NT> 
 void roln(NT &val,unsigned int n) {
-    val= (val << n) | (val >> (8-n));
+    val= (val << n) | (val >> (32-n));
 }
 
 template <> 
 void roln<uint32_t>(uint32_t &val,unsigned int n) {
-    val= (val << n) | (val >> (8-n));
+    val= (val << n) | (val >> (32-n));
 }
 
 void endicha(uint8_t *a, uint32_t *b){

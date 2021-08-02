@@ -183,28 +183,28 @@ void cMain::open_enc_file(wxString infile) {
     if (check_extend(infile))infile = extend_off(infile);
   }
 
-  buffer = usr_enter->GetValue().ToUTF8();
+  buffer = usr_enter->GetValue().To8BitData();
   pswd_data = buffer.data();
   if (usr_enter->GetValue().empty()){
     wxMessageBox("Need password", "This file is encrypted. \nEnter a password first, then save.", wxOK);
     usr_enter->SetFocus();
     return;
   }
-  if(DEBUG_OUT_PDM)std::printf("Password: %s for file: %s.pdm\n",pswd_data,(char*)infile.mb_str().data());
+  if(DEBUG_OUT_PDM){
+
+    std::printf("Password: %s for file: %s.pdm\n",pswd_data,(char*)infile.mb_str().data());
+  }
   wxFile file1( infile+".pdm", wxFile::read );
   size_t file_len = file1.Length();
   if(file_len ==-1)return;
 
-  if(data_alloc){
-    delete[] data;
-    delete[] outstr;
-  }
-  data = new char[file_len+1];
-  outstr=new char[file_len+1];
+
+  data = data_get(file_len+1);
+  outstr=outstr_get(file_len+1);
   data_alloc=1;
   file1.Read(data,file_len);
   file1.Close();
-//  std::printf("OF file %s \nsize: %zu\n",data,file_len);
+  std::printf("IF file %s \nsize: %zu\n",data,file_len);
 
   CurrentFileName=pton(infile);
   CurrentDocPath=infile;
@@ -217,6 +217,7 @@ void cMain::open_enc_file(wxString infile) {
 
   DE = 1;
   cmd_enc((uint8_t*)data,(size_t)CurrentFileSize,(uint8_t*)outstr,((std::string)pswd_data));
+  std::printf("OF file:%s \n",outstr);
   pane_usrspc->Clear();
   pane_usrspc->WriteText(outstr);
 
@@ -236,33 +237,22 @@ void cMain::open_file(wxString infile) {
 
 void cMain::stc_save_as(wxCommandEvent& event){
   std::printf("[stc_save_as] Starting operation\n");
+  size_t file_len=0;
   CurrentDocPath="";
   CurrentFileName="New_File";
-  wxRichTextBuffer bff = pane_usrspc->GetBuffer();
-  wxMemoryOutputStream stream;
-  bff.SaveFile(stream,wxRICHTEXT_TYPE_TEXT);
-  if(data_alloc){
-    delete[] data;
-    delete[] outstr;
-  }
-  data = new char[stream.GetSize() + 1];
-  outstr = new char[stream.GetSize()+13];
-  data_alloc=1;
-
+  get_usrspc(file_len);
   buffer = usr_enter->GetValue().ToUTF8();
   pswd_data = buffer.data();
-  stream.CopyTo(data, stream.GetSize());
-  data[stream.GetSize()]='\0';
   if (usr_enter->GetValue().empty()){
     wxMessageBox("Need password", "Enter a password first, then save.", wxOK);
     stc_pswd_focus(event);
     return;
   }
-  std::cout<<"Captured text of size "<<stream.GetSize()<<": "<<data<<std::endl;
+  std::cout<<"Captured text of size "<<file_len<<": "<<data<<std::endl;
   std::cout<<"Password: "<<pswd_data<<std::endl;
-  CurrentFileSize=stream.GetSize()+12;
-  DE = 0;
-  cmd_enc((uint8_t*)data,(size_t)stream.GetSize(),(uint8_t*)outstr,((std::string)pswd_data));
+  CurrentFileSize=file_len+12;
+  DE = 0;// Enable encryption
+  cmd_enc((uint8_t*)data,(size_t)file_len,(uint8_t*)outstr,((std::string)pswd_data));
 
 
   auto* OpenDialog = new wxFileDialog(
@@ -356,13 +346,10 @@ void cMain::cMainOnFile(wxUpdateUIEvent & event) {
 
 void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
   std::printf("[stc_open] Starting operation\n");
-
 	auto* OpenDialog = new wxFileDialog(
 		this, _("Choose a file to open"), wxEmptyString, wxEmptyString,
 		_("*"),
 			wxFD_OPEN, wxDefaultPosition, wxSize(300,500));
-
-	// Creates a "open file" dialog with 4 file types
 	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "cancel"
 	{
 
@@ -371,13 +358,10 @@ void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
 	    if(check_extend(OpenDialog->GetPath()))
 		  {
 	      open_enc_file(OpenDialog->GetPath());
-
-//        tree_ctrl->addFileToTree(CurrentDocPath);
 		    return;
 		  }
 		CurrentFileName= OpenDialog->GetFilename();
 		  CurrentDocPath = OpenDialog->GetPath();
-
 		pane_usrspc->LoadFile(CurrentDocPath,wxFILE); //Opens that file
     update_file_label(CurrentFileName,0,0);
 	}
@@ -398,34 +382,39 @@ void cMain::stc_usrspc_focus(wxCommandEvent& event)  {
   pane_usrspc->SetFocus();
 }
 
+char* cMain::get_usrspc(size_t& a){
+  wxString bff = pane_usrspc->GetValue();
+  std::string bff_str=(char*)bff.mb_str().data();
+  data = data_get(bff_str.size()+2);
+  outstr = outstr_get(bff.size()+14);
+  for(size_t i=0; i<bff.size();i++){
+    data[i]=bff_str.data()[i];
+  }
+  data[bff.size()]='\n';
+  data[bff.size()+1]='\0';
+  std::printf("Content %zu: \"%s\"\n",bff_str.size(),data);
+  a = bff_str.size()+1;
+  return data;
+}
+
 void cMain::stc_save(wxCommandEvent& event) {
   std::printf("[stc_save] Starting operation\n");
+  size_t inp_len=0;
 
-  wxRichTextBuffer bff = pane_usrspc->GetBuffer();
-  wxMemoryOutputStream stream;
-  bff.SaveFile(stream,wxRICHTEXT_TYPE_TEXT);
-  if(data_alloc){
-    delete[] data;
-    delete[] outstr;
-  }
-  data = new char[stream.GetSize() + 1];
-  outstr = new char[stream.GetSize()+13];
-  data_alloc=1;
-
-  buffer = usr_enter->GetValue().ToUTF8();
+  get_usrspc(inp_len);
+  buffer = usr_enter->GetValue().To8BitData();
   pswd_data = buffer.data();
-  stream.CopyTo(data, stream.GetSize());
-  data[stream.GetSize()]='\0';
   if (usr_enter->GetValue().empty()){
     wxMessageBox("Need password", "Enter a password first, then save.", wxOK);
     stc_pswd_focus(event);
     return;
   }
-//  std::cout<<"Captured text of size "<<stream.GetSize()<<": "<<data<<std::endl;
   std::cout<<"Password: "<<pswd_data<<std::endl;
-  CurrentFileSize=stream.GetSize()+12;
+  CurrentFileSize=inp_len+12;//CHANGE HERE
+  std::cout<<"Size save file: "<<CurrentFileSize<<std::endl;
+
   DE = 0;
-  cmd_enc((uint8_t*)data,(size_t)stream.GetSize(),(uint8_t*)outstr,((std::string)pswd_data));
+  cmd_enc((uint8_t*)data,(size_t)inp_len,(uint8_t*)outstr,((std::string)pswd_data));
 
   if (!CurrentFileName.empty()){
     std::cout << "doc dir: " << CurrentDocPath << std::endl;
@@ -503,12 +492,8 @@ wxString cMain::pton(wxString& a){
 cMain::~cMain()
 {
 
-    if (data_alloc)
-    {
-      delete[] data;
-      delete[] outstr;
-      data_alloc=0;
-    }
+    if(outstr_alloc) delete[] outstr;
+    if(data_alloc)  delete[] data;
 
 }
 

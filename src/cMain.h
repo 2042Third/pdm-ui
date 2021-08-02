@@ -121,16 +121,31 @@ public:
 	void stc_usrspc_focus(wxCommandEvent& event);
 	void cMainOnFile(wxUpdateUIEvent &event);
   wxString extend_off(wxString a);
-	
+  char* get_usrspc(size_t& a);
 	// Decrypted tree
 	void create_dec_tree();
 private:
+  char* data_get(size_t a){
+    if(data_alloc){
+      delete[] data;
+      data_alloc=1;
+    }
+    return new char[a];
+  }
+  char* outstr_get(size_t a){
+    if(outstr_alloc){
+      delete[] outstr;
+      outstr_alloc=1;
+    }
+    return new char[a];
+  }
   int DEBUG_OUT_PDM=1;
   wxStaticText* pswd_text;
   wxStaticText* file_text;
   char* pswd_data;
   char* data;
   int data_alloc=0;
+  int outstr_alloc=0;
   char* outstr= nullptr;
   wxCharBuffer buffer;
   wxTreeItemId root_man;
