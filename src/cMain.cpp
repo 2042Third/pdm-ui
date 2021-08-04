@@ -12,6 +12,7 @@
 #include "wx/image.h"
 #include "wx/treectrl.h"
 #include "wx/math.h"
+#include <wx/stc/stc.h>
 #include "wx/mstream.h"
 #include "wx/wupdlock.h"
 #include <wx/tokenzr.h>
@@ -101,6 +102,8 @@ cMain::cMain(wxWindow* parent,
 	pane_files->SetScrollPos(wxVERTICAL,0,0);
 	pane_files->SetBasicStyle(attr);
 	pane_usrspc = new wxRichTextCtrl(panel, 103, "");
+//	pane_usrspc = new wxTextCtrl(panel, 103, "",wxDefaultPosition,wxDefaultSize,wxTE_MULTILINE|wxTE_WORDWRAP);
+//	pane_usrspc = new wxStyledTextCtrl(panel, wxID_ANY);
 	pane_usrspc->SetBasicStyle(attr);
 	pane_files_sizer = new wxBoxSizer(wxVERTICAL);
 	pane_usrspc_sizer = new wxBoxSizer(wxVERTICAL);
@@ -142,13 +145,13 @@ cMain::cMain(wxWindow* parent,
 }
 
 void cMain::create_dec_tree(){
-	long style = wxTR_DEFAULT_STYLE |
+	long styles = wxTR_DEFAULT_STYLE |
 #ifndef NO_VARIABLE_HEIGHT
                  wxTR_HAS_VARIABLE_ROW_HEIGHT |
 #endif
                  wxTR_EDIT_LABELS | wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS;
 
-    tree_creator(style | wxSIMPLE_BORDER);
+    tree_creator(styles | wxSIMPLE_BORDER);
 
 
 }
@@ -199,12 +202,14 @@ void cMain::open_enc_file(wxString infile) {
   if(file_len ==-1)return;
 
 
-  data = data_get(file_len+1);
-  outstr=outstr_get(file_len+1);
+//  data = data_get(file_len+1);
+//  outstr=outstr_get(file_len+1);
+  data_get(file_len+1);
+  outstr_get(file_len+1);
   data_alloc=1;
-  file1.Read(data,file_len);
+  file1.Read(data.data(),file_len);
   file1.Close();
-  std::printf("IF file %s \nsize: %zu\n",data,file_len);
+  std::printf("IF file %s \nsize: %zu\n",data.data(),file_len);
 
   CurrentFileName=pton(infile);
   CurrentDocPath=infile;
@@ -216,10 +221,10 @@ void cMain::open_enc_file(wxString infile) {
   update_file_label(CurrentFileName,1,0);
 
   DE = 1;
-  cmd_enc((uint8_t*)data,(size_t)CurrentFileSize,(uint8_t*)outstr,((std::string)pswd_data));
-  std::printf("OF file:%s \n",outstr);
+  cmd_enc((uint8_t*)data.data(),(size_t)CurrentFileSize,(uint8_t*)outstr.data(),((std::string)pswd_data));
+  std::printf("OF file:%s \n",outstr.data());
   pane_usrspc->Clear();
-  pane_usrspc->WriteText(outstr);
+  pane_usrspc->WriteText(outstr.data());
 
 }
 
@@ -248,14 +253,14 @@ void cMain::stc_save_as(wxCommandEvent& event){
     stc_pswd_focus(event);
     return;
   }
-  std::cout<<"Captured text of size "<<file_len<<": "<<data<<std::endl;
+//  std::cout<<"Captured text of size "<<file_len<<": "<<data.data()<<std::endl;
   std::cout<<"Password: "<<pswd_data<<std::endl;
   CurrentFileSize=file_len+12;
   DE = 0;// Enable encryption
-  cmd_enc((uint8_t*)data,(size_t)file_len,(uint8_t*)outstr,((std::string)pswd_data));
+  cmd_enc((uint8_t*)data.data(),(size_t)file_len,(uint8_t*)outstr.data(),((std::string)pswd_data));
 
 
-  auto* OpenDialog = new wxFileDialog(
+  OpenDialog = new wxFileDialog(
       this, _("Save As file"), wxEmptyString, CurrentFileName,
       _("*"),
       wxFD_SAVE, wxDefaultPosition, wxSize(300,500));
@@ -272,7 +277,7 @@ void cMain::stc_save_as(wxCommandEvent& event){
     wxFile file( CurrentDocPathEnc, wxFile::write );
     if( file.IsOpened() )
     {
-      file.Write(outstr,CurrentFileSize);
+      file.Write(outstr.data(),CurrentFileSize);
       file.Close();
     }
     tree_ctrl->d_target->m_pOwner->WriteText(_("saved "));
@@ -294,7 +299,7 @@ void cMain::c_about(wxCommandEvent& WXUNUSED(event))
 
 void cMain::stc_quit(wxCommandEvent& WXUNUSED(event)) {
 
-  bool veto = Close();
+  Close();
 }
 
 void cMain::stc_new(wxCommandEvent& event) {
@@ -335,6 +340,7 @@ void cMain::maintain_theme(){
 	tree_ctrl->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 	pane_files->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
 	pane_usrspc->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
+
 	pane_usrspc->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 
 }
@@ -346,32 +352,32 @@ void cMain::cMainOnFile(wxUpdateUIEvent & event) {
 
 void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
   std::printf("[stc_open] Starting operation\n");
-	auto* OpenDialog = new wxFileDialog(
+	OpenFileDialog = new wxFileDialog(
 		this, _("Choose a file to open"), wxEmptyString, wxEmptyString,
 		_("*"),
 			wxFD_OPEN, wxDefaultPosition, wxSize(300,500));
-	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "cancel"
+	if (OpenFileDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "cancel"
 	{
 
-	  std::cout << "doc dir: " << OpenDialog->GetPath() << std::endl;
-	  if (OpenDialog->GetPath().size() > 4)
-	    if(check_extend(OpenDialog->GetPath()))
+	  std::cout << "doc dir: " << OpenFileDialog->GetPath() << std::endl;
+	  if (OpenFileDialog->GetPath().size() > 4)
+	    if(check_extend(OpenFileDialog->GetPath()))
 		  {
-	      open_enc_file(OpenDialog->GetPath());
+	      open_enc_file(OpenFileDialog->GetPath());
 		    return;
 		  }
-		CurrentFileName= OpenDialog->GetFilename();
-		  CurrentDocPath = OpenDialog->GetPath();
+	  CurrentFileName= OpenFileDialog->GetFilename();
+	    CurrentDocPath = OpenFileDialog->GetPath();
 		pane_usrspc->LoadFile(CurrentDocPath,wxFILE); //Opens that file
     update_file_label(CurrentFileName,0,0);
 	}
-	OpenDialog->Destroy();
+	OpenFileDialog->Destroy();
 }
 
 void cMain::OnFont()
 {
 	attr.SetTextColour(*wxWHITE);
-	pane_usrspc->SetBasicStyle( attr);
+//	pane_usrspc->SetBasicStyle( attr);
 	pane_files->SetBasicStyle(attr);
 }
 
@@ -385,16 +391,18 @@ void cMain::stc_usrspc_focus(wxCommandEvent& event)  {
 char* cMain::get_usrspc(size_t& a){
   wxString bff = pane_usrspc->GetValue();
   std::string bff_str=(char*)bff.mb_str().data();
-  data = data_get(bff_str.size()+2);
-  outstr = outstr_get(bff.size()+14);
-  for(size_t i=0; i<bff.size();i++){
-    data[i]=bff_str.data()[i];
+//  data = data_get(bff_str.size()+2);
+  data_get(bff_str.size()+2);
+//  outstr = outstr_get(bff.size()+14);
+  outstr_get(bff.size()+14);
+  for(size_t thr=0; thr<bff.size();thr++){
+    data[thr]=bff_str[thr];
   }
   data[bff.size()]='\n';
   data[bff.size()+1]='\0';
-  std::printf("Content %zu: \"%s\"\n",bff_str.size(),data);
-  a = bff_str.size()+1;
-  return data;
+  std::printf("Content %zu: \"%s\"\n",bff_str.size(),data.data());
+  a = bff_str.size()+2;
+  return data.data();
 }
 
 void cMain::stc_save(wxCommandEvent& event) {
@@ -409,15 +417,15 @@ void cMain::stc_save(wxCommandEvent& event) {
     stc_pswd_focus(event);
     return;
   }
-  std::cout<<"Password: "<<pswd_data<<std::endl;
+//  std::cout<<"Password: "<<pswd_data<<std::endl;
   CurrentFileSize=inp_len+12;//CHANGE HERE
-  std::cout<<"Size save file: "<<CurrentFileSize<<std::endl;
+//  std::cout<<"Size save file: "<<CurrentFileSize<<std::endl;
 
   DE = 0;
-  cmd_enc((uint8_t*)data,(size_t)inp_len,(uint8_t*)outstr,((std::string)pswd_data));
+  cmd_enc((uint8_t*)data.data(),(size_t)inp_len,(uint8_t*)outstr.data(),((std::string)pswd_data));
 
   if (!CurrentFileName.empty()){
-    std::cout << "doc dir: " << CurrentDocPath << std::endl;
+//    std::cout << "doc dir: " << CurrentDocPath << std::endl;
 
     CurrentFileNameEnc=CurrentFileName+".pdm";
     CurrentDocPathEnc=CurrentDocPath+".pdm";
@@ -425,7 +433,7 @@ void cMain::stc_save(wxCommandEvent& event) {
     wxFile file( CurrentDocPathEnc, wxFile::write );
     if( file.IsOpened() )
     {
-      file.Write(outstr,CurrentFileSize);
+      file.Write(outstr.data(),CurrentFileSize);
       std::cout<<file.Length()<<std::endl;
       file.Close();
     }
@@ -436,7 +444,7 @@ void cMain::stc_save(wxCommandEvent& event) {
     return;
   }
 
-  auto* OpenDialog = new wxFileDialog(
+  OpenDialog = new wxFileDialog(
       this, _("Save file"), wxEmptyString, CurrentFileName,
       _("*"),
       wxFD_SAVE, wxDefaultPosition, wxSize(300,500));
@@ -452,7 +460,7 @@ void cMain::stc_save(wxCommandEvent& event) {
     wxFile file( CurrentDocPathEnc, wxFile::write );
     if( file.IsOpened() )
     {
-      file.Write(outstr,CurrentFileSize);
+      file.Write(outstr.data(),CurrentFileSize);
       file.Close();
     }
     tree_ctrl->d_target->m_pOwner->WriteText(_("Successfully saved "));
@@ -463,7 +471,7 @@ void cMain::stc_save(wxCommandEvent& event) {
   OpenDialog->Destroy();
 
 }
-void cMain::update_file_label(wxString a, int b,int c){
+void cMain::update_file_label(const wxString& a, int b,int c){
 
   if (b){
     file_text->SetLabel(a+" [Encrypted]");
@@ -489,13 +497,13 @@ wxString cMain::extend_off(wxString a){
 wxString cMain::pton(wxString& a){
   return wxFileNameFromPath(a);
 }
-cMain::~cMain()
-{
-
-    if(outstr_alloc) delete[] outstr;
-    if(data_alloc)  delete[] data;
-
-}
+//cMain::~cMain()
+//{
+//
+//    if(outstr_alloc) delete[] outstr;
+//    if(data_alloc)  delete[] data;
+//
+//}
 
 
 

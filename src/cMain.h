@@ -12,6 +12,8 @@
 #include <iostream>
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/stc/stc.h>
+#include <vector>
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -51,12 +53,9 @@ public:
 		const wxSize& size = wxDefaultSize,
 		long style = wxDEFAULT_FRAME_STYLE,
 		const wxString& name = wxASCII_STR(wxFrameNameStr));
-	~cMain();
+//	~cMain();
 
-	// Encryption
-	wxTextCtrl* key_entry = nullptr;
-	// File 
-	wxTextCtrl* MainEditBox;
+
 	wxString CurrentDocPath;
 	wxString CurrentDocPathEnc;
 	wxString CurrentFileName;
@@ -87,6 +86,7 @@ public:
 	wxStaticBox* pane_auth = nullptr;
 	wxRichTextCtrl* pane_files = nullptr;
 	wxRichTextCtrl* pane_usrspc = nullptr;
+//	wxStyledTextCtrl* pane_usrspc = nullptr;
 //	wxTextCtrl* pane_usrspc;
   wxBoxSizer* pane_sizer = nullptr;
   wxBoxSizer* passwd_sizer = nullptr;
@@ -95,12 +95,13 @@ public:
 	wxStaticText* txt = nullptr;
 	wxTextCtrl* usr_enter;
   static wxString pton(wxString& a);
-	 
+  wxFileDialog* OpenDialog;
+  wxFileDialog* OpenFileDialog;
 	// Border Val
 	int size_border_ver = 20;
 	int size_border_hor = 20;
   //Open
-  int check_extend(wxString a);
+  static int check_extend(wxString a);
   void open_enc_file(wxString infile);
   void open_file(wxString infile);
 
@@ -116,45 +117,47 @@ public:
 	void OneKeyEnter(wxCommandEvent& event);
 	void OnFont();
 	void Resize();
-	void update_file_label(wxString a, int b, int c);
+	void update_file_label(const wxString& a, int b, int c);
 	void stc_pswd_focus(wxCommandEvent& event);
 	void stc_usrspc_focus(wxCommandEvent& event);
 	void cMainOnFile(wxUpdateUIEvent &event);
-  wxString extend_off(wxString a);
+  static wxString extend_off(wxString a);
   char* get_usrspc(size_t& a);
 	// Decrypted tree
 	void create_dec_tree();
 private:
   char* data_get(size_t a){
-    if(data_alloc){
-      delete[] data;
-      data_alloc=1;
-    }
-    return new char[a];
+//    if(data_alloc){
+//      delete[] data;
+//    }
+    data_alloc=1;
+    data.reserve(a);
+    return data.data();
   }
   char* outstr_get(size_t a){
-    if(outstr_alloc){
-      delete[] outstr;
-      outstr_alloc=1;
-    }
-    return new char[a];
+//    if(outstr_alloc){
+//      delete[] outstr;
+//    }
+    outstr_alloc=1;
+    outstr.reserve(a);
+    return outstr.data();
   }
   int DEBUG_OUT_PDM=1;
   wxStaticText* pswd_text;
   wxStaticText* file_text;
   char* pswd_data;
-  char* data;
+  std::vector<char> data;
   int data_alloc=0;
   int outstr_alloc=0;
-  char* outstr= nullptr;
+  std::vector<char> outstr;
   wxCharBuffer buffer;
   wxTreeItemId root_man;
-  long style = wxTR_DEFAULT_STYLE |
-                      #ifndef NO_VARIABLE_HEIGHT
-                      wxTR_HAS_VARIABLE_ROW_HEIGHT |
-                      #endif
-                      wxTR_EDIT_LABELS;
-	wxString fileText = _T("请将需要加密的文件拖入此窗口");
+//  long style = wxTR_DEFAULT_STYLE |
+//                      #ifndef NO_VARIABLE_HEIGHT
+//                      wxTR_HAS_VARIABLE_ROW_HEIGHT |
+//                      #endif
+//                      wxTR_EDIT_LABELS;
+//	wxString fileText = _T("请将需要加密的文件拖入此窗口");
 	// void OnDropFiles(wxDropFilesEvent& event);
 	void maintain_theme();
     Tree_Ctrl::DnDFile *d_target;

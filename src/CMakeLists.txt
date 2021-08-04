@@ -36,7 +36,7 @@ find_package(wxWidgets 3.0 COMPONENTS all REQUIRED)
 include(${wxWidgets_USE_FILE})
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -O2 -D MAC_OS -D LINUX -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -O3 -g -D MAC_OS -D LINUX -pthread")
 
 # Define a variable containing a list of source files for the project
 set(SRC_FILES
@@ -61,6 +61,6 @@ if(APPLE)
         RESOURCE ".logonight.icns"
         MACOSX_BUNDLE_ICON_FILE logonight.icns
         MACOSX_BUNDLE_COPYRIGHT "Copyright Yang Yi"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "org.dryangyi.pdm"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.wxwidgets.pdm"
         )
 endif()
