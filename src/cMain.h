@@ -34,6 +34,7 @@
 #include <wx/filepicker.h>
 #include <wx/sizer.h>
 #include <wx/dialog.h>
+#include "pdmrc.h"
 #include "wx/richtext/richtextctrl.h"
 //#include <wx/richtext/richtextbuffer.h>
 // #define wxUSE_DRAG_AND_DROP = 1
@@ -45,6 +46,8 @@ class cMain : public wxFrame
 {
 
 public:
+//  ~cMain(){}
+
 	//cMain(const wxString& title, const wxSize& size);
 	cMain(wxWindow* parent,
 		wxWindowID id,
@@ -80,6 +83,7 @@ public:
 	wxMenuItem* file_new;
 	wxMenuItem* file_save_as;
 	wxMenuItem* file_quit;
+	wxMenuItem* file_config;
 
 	// Window handle
 	wxPanel* panel = nullptr;
@@ -106,6 +110,7 @@ public:
   void open_file(wxString infile);
 
 	// Event handle
+	void stc_load_config(wxCommandEvent& event);
 	void stc_quit(wxCommandEvent& event);
 	void stc_open(wxCommandEvent& event);
 	void stc_save(wxCommandEvent& event);
@@ -124,6 +129,11 @@ public:
   static wxString extend_off(wxString a);
   char* get_usrspc(size_t& a);
 	// Decrypted tree
+	template<typename N>
+	void write_log(N a){
+	  tree_ctrl->d_target->m_pOwner->WriteText(a);
+	  tree_ctrl->d_target->m_pOwner->WriteText("\n");
+	}
 	void create_dec_tree();
 private:
   char* data_get(size_t a){
@@ -152,6 +162,10 @@ private:
   std::vector<char> outstr;
   wxCharBuffer buffer;
   wxTreeItemId root_man;
+  pdmrc* rc_file;
+//  ~cMain(){
+//    delete rc_file;
+//  }
 //  long style = wxTR_DEFAULT_STYLE |
 //                      #ifndef NO_VARIABLE_HEIGHT
 //                      wxTR_HAS_VARIABLE_ROW_HEIGHT |
@@ -167,7 +181,7 @@ private:
 
 	Tree_Ctrl * tree_ctrl;
 	wxDECLARE_EVENT_TABLE();
-	
+	friend class pdmrc;
 	//wxRichTextCtrl* m_richTextCtrl;
 };
 

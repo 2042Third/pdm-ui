@@ -88,9 +88,9 @@ void Tree_Ctrl::addFileToTree(const wxString& tree_str) {
     wxString filename = tree_str;
     if(((cMain*)parent)->check_extend(tree_str)) filename=((cMain*)parent)->extend_off(tree_str);
     size_t a = hasher((char*)filename.mb_str().data());
-    size_t b = hasher((char*)filename.mb_str().data());
+//    size_t b = hasher((char*)filename.mb_str().data());
     std::cout<<"Hashing "<<a<<std::endl;
-    tree_pair = tree_eles.insert(std::pair<size_t,size_t>(a, b));
+    tree_pair = tree_eles.insert(std::pair<size_t,std::string>(a, (char*)filename.mb_str().data()));
     if( tree_pair.second==false)return;
     std::cout<<"Adding "<<tree_str<<std::endl;
     wxTreeItemId id = AppendItem(rootId, filename,-1,

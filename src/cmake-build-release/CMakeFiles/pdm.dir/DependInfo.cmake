@@ -13,6 +13,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cApp.cpp" "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cmake-build-release/CMakeFiles/pdm.dir/cApp.cpp.o"
   "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cMain.cpp" "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cmake-build-release/CMakeFiles/pdm.dir/cMain.cpp.o"
   "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmFile.cpp" "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cmake-build-release/CMakeFiles/pdm.dir/pdmFile.cpp.o"
+  "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmrc.cpp" "/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cmake-build-release/CMakeFiles/pdm.dir/pdmrc.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 

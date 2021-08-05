@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pdm class="pdm">
+  <logs>Wed Aug  4 20:56:48 2021</logs>
+  <tree-rc>
+    <f0>/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/CMakeLists.txt</f0>
+    <f1>/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cMain.cpp</f1>
+    <f2>/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/descrip.mms</f2>
+    <f3>/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cc20_supl.cpp</f3>
+    <f4>/Users/mikeyang/Desktop/Untitled</f4>
+    <f5>/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/cMain.h</f5>
+  </tree-rc>
+</pdm>

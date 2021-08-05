@@ -249,6 +249,30 @@ pdmFile.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pdm.dir/build.make CMakeFiles/pdm.dir/pdmFile.cpp.s
 .PHONY : pdmFile.cpp.s
 
+pdmrc.o: pdmrc.cpp.o
+.PHONY : pdmrc.o
+
+# target to build an object file
+pdmrc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pdm.dir/build.make CMakeFiles/pdm.dir/pdmrc.cpp.o
+.PHONY : pdmrc.cpp.o
+
+pdmrc.i: pdmrc.cpp.i
+.PHONY : pdmrc.i
+
+# target to preprocess a source file
+pdmrc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pdm.dir/build.make CMakeFiles/pdm.dir/pdmrc.cpp.i
+.PHONY : pdmrc.cpp.i
+
+pdmrc.s: pdmrc.cpp.s
+.PHONY : pdmrc.s
+
+# target to generate assembly for a file
+pdmrc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pdm.dir/build.make CMakeFiles/pdm.dir/pdmrc.cpp.s
+.PHONY : pdmrc.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -273,6 +297,9 @@ help:
 	@echo "... pdmFile.o"
 	@echo "... pdmFile.i"
 	@echo "... pdmFile.s"
+	@echo "... pdmrc.o"
+	@echo "... pdmrc.i"
+	@echo "... pdmrc.s"
 .PHONY : help
 
 

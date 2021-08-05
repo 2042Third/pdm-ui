@@ -18,7 +18,7 @@
 #include <wx/tokenzr.h>
 #include "cc20_multi.cpp"
 #include "id.h"
-
+#include "pdmrc.h"
 
 //std::vector<wxString> current_files={};
 // TESTING ONLY -- Adapted from offical manual
@@ -39,6 +39,7 @@ wxBEGIN_EVENT_TABLE(cMain, wxFrame)
   EVT_MENU(wxID_NEW, cMain::stc_new)
 	EVT_MENU(wxID_EXIT, cMain::stc_quit)
 	EVT_MENU((wxStandardID)window::id::PDM_ABOUT,cMain::c_about)
+	EVT_MENU((wxStandardID)window::id::LOAD_CONFIG,cMain::stc_load_config)
 	EVT_CLOSE(cMain::on_close)
 wxEND_EVENT_TABLE()
 
@@ -70,12 +71,14 @@ cMain::cMain(wxWindow* parent,
 	file_new = new wxMenuItem(menu_file, wxID_NEW, wxString(wxT("&New\tCtrl+n")), wxEmptyString, wxITEM_NORMAL);
 	pdm_about = new wxMenuItem(menu_file, window::id::PDM_ABOUT,wxString(wxT("&About")),"About pdm",wxITEM_NORMAL);
 	file_quit = new wxMenuItem(menu_file,wxID_EXIT);
+	file_config = new wxMenuItem(menu_file,window::id::LOAD_CONFIG,wxString(wxT("Load Confi&g\tCtrl+g")));
 
 	menu_file->Append(file_open);
 	menu_file->Append(file_new);
 	menu_file->Append(file_save);
 	menu_file->AppendSeparator();
 	menu_file->Append(file_save_as);
+	menu_file->Append(file_config);
 	menu_pdm->Append(pdm_about);
 	menu_file->Append(file_quit);
 	menu_view->Append(view_pswd_focus);
@@ -141,6 +144,8 @@ cMain::cMain(wxWindow* parent,
 	this->SetMenuBar(menu_bar);
 	this->Centre(wxBOTH);
 	this->SetFocus();
+	rc_file = new pdmrc(this);
+  rc_file->init_rc();
 
 }
 
@@ -228,6 +233,10 @@ void cMain::open_enc_file(wxString infile) {
 
 }
 
+void cMain::stc_load_config(wxCommandEvent &event) {
+    rc_file->load_rc();
+
+}
 
 /**
  * Input a Path called infile
@@ -313,10 +322,14 @@ void cMain::stc_new(wxCommandEvent& event) {
 }
 
 void cMain::on_close(wxCloseEvent& event){
+  rc_file->read_rc();
+
+  rc_file->save_rc();
 	if (event.CanVeto()) {
 	    int answer = wxMessageBox(_T("退出!"), _T("请确认加密文件已保存"),wxYES_NO| wxCANCEL,panel);
 		this->SetFocus();
-	    if (answer != wxYES) {
+		if (answer != wxYES) {
+//		  delete rc_file;
 			event.Veto();
 			return;
 		}
@@ -348,6 +361,7 @@ void cMain::cMainOnFile(wxUpdateUIEvent & event) {
 //    std::cout<<"on File \n"<<std::endl;
     if(d_target->has_update_files) tree_ctrl->update_current();
     d_target->has_update_files=0;
+//    rc_file->read_rc();
 }
 
 void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
@@ -469,7 +483,7 @@ void cMain::stc_save(wxCommandEvent& event) {
     tree_ctrl->addFileToTree(CurrentDocPath);
     }
   OpenDialog->Destroy();
-
+  rc_file->read_rc();
 }
 void cMain::update_file_label(const wxString& a, int b,int c){
 
@@ -479,6 +493,8 @@ void cMain::update_file_label(const wxString& a, int b,int c){
   else {
     file_text->SetLabel(a+" [Not Encrypted]");
   }
+  rc_file->read_rc();
+
 }
 int cMain::check_extend(wxString a){
   std::string infile_name = (char*)a.mb_str().data();

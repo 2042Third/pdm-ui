@@ -92,9 +92,9 @@ public:
     void set_d_target(Tree_Ctrl::DnDFile* d){d_target=d;}
     Tree_Ctrl::DnDFile * d_target;
     wxFrame * parent;
-    std::map<size_t,size_t> tree_eles;
+    std::map<size_t,std::string> tree_eles;
     std::hash<std::string> hasher;
-    std::pair<std::map<size_t,size_t>::iterator,bool> tree_pair;
+    std::pair<std::map<size_t,std::string>::iterator,bool> tree_pair;
 private:
 
     wxTreeItemId rootId= AddRoot("Root",-1,-1,

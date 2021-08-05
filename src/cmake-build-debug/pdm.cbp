@@ -130,6 +130,12 @@
 		<Unit filename="/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmFile.h">
 			<Option target="pdm"/>
 		</Unit>
+		<Unit filename="/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmrc.cpp">
+			<Option target="pdm"/>
+		</Unit>
+		<Unit filename="/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/pdmrc.h">
+			<Option target="pdm"/>
+		</Unit>
 		<Unit filename="/Users/mikeyang/Downloads/wxWidgets-master/samples/minimal/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

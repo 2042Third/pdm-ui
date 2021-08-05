@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/pdm.dir/cApp.cpp.o"
   "CMakeFiles/pdm.dir/cMain.cpp.o"
   "CMakeFiles/pdm.dir/pdmFile.cpp.o"
+  "CMakeFiles/pdm.dir/pdmrc.cpp.o"
   "pdm.app/Contents/MacOS/pdm"
   "pdm.pdb"
 )
