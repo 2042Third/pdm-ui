@@ -68,6 +68,17 @@ public:
     void OnItemCollapsing(wxTreeEvent& event);
     void addFileToTree(const wxString& tree_str);
     void OnItemActivated(wxTreeEvent& event);
+    void OnMenuHighlight(wxMenuEvent& event);
+    void ShowTreeTooltip(wxTreeEvent& event);
+    void OnItemMenu(wxTreeEvent& event);
+    void OnItemMenuDelete(wxCommandEvent& event);
+    void OnItemMenuOpenEnc(wxCommandEvent& event);
+    void OnItemMenuOpenPlain(wxCommandEvent& event);
+    void OnMenuClose(wxMenuEvent& event);
+    wxString name_by_event(wxTreeEvent& event);
+    wxString name_by_event(wxCommandEvent& event);
+    wxString get_tooltip(wxTreeEvent& event);
+    void OnGetToolTip(wxCommandEvent& event) ;
 
     void SetAlternateImages(bool show) { m_alternateImages = show; }
     bool AlternateImages() const { return m_alternateImages; }
@@ -88,6 +99,12 @@ public:
 
         wxRichTextCtrl *m_pOwner;
     };
+    wxMenu* menu;
+    wxMenuItem* item_delete;
+    wxMenuItem* item_open_enc;
+    wxMenuItem* item_open_plain;
+    wxMenuItem* item_menu_str;
+    size_t get_item_hash(wxString a);
     void set_parent(wxFrame* a){parent=a;}
     void set_d_target(Tree_Ctrl::DnDFile* d){d_target=d;}
     Tree_Ctrl::DnDFile * d_target;
@@ -126,6 +143,11 @@ private:
 enum{
     TreeTest_ToggleSel,
     File_Drop=1001,
-    Dec_Tree  = 1000
+    Dec_Tree  = 1000,
+    ItemMenuDelete,
+    ItemMenuOpenEnc,
+    ItemMenuOpenPlain,
+    ItemMenu,
+    ItemMenuStr
 };
 #endif //PDM_TREE_CTRL_H

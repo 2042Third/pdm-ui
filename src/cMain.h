@@ -14,6 +14,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/stc/stc.h>
 #include <vector>
+#include <wx/statusbr.h>
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -98,9 +99,17 @@ public:
   wxBoxSizer* pane_usrspc_sizer = nullptr;
 	wxStaticText* txt = nullptr;
 	wxTextCtrl* usr_enter;
-  static wxString pton(wxString& a);
   wxFileDialog* OpenDialog;
   wxFileDialog* OpenFileDialog;
+  wxStatusBar* stat_bar= nullptr;
+  wxString idle_str="pdm";
+//  wxStatusBarPane* bar1;
+//  wxStatusBarPane* bar2;
+//  wxStatusBarPane* bar3;
+//  wxStatusBarPane* bar4;
+  //Helper
+  static wxString pton(wxString& a);
+
 	// Border Val
 	int size_border_ver = 20;
 	int size_border_hor = 20;
@@ -116,6 +125,7 @@ public:
 	void stc_save(wxCommandEvent& event);
 	void stc_save_as(wxCommandEvent& event);
 	void stc_new(wxCommandEvent& event);
+	void OnIdle( wxIdleEvent& event );
 	void on_close(wxCloseEvent& event);
 	void c_about(wxCommandEvent& event);
 	//void OnSaveAs(wxCommandEvent& event);
@@ -132,6 +142,12 @@ public:
 	template<typename N>
 	void write_log(N a){
 	  tree_ctrl->d_target->m_pOwner->WriteText(a);
+	  tree_ctrl->d_target->m_pOwner->WriteText("\n");
+	}
+	template<typename N>
+	void write_log(N a,const N b){
+	  tree_ctrl->d_target->m_pOwner->WriteText(a);
+	  tree_ctrl->d_target->m_pOwner->WriteText(b);
 	  tree_ctrl->d_target->m_pOwner->WriteText("\n");
 	}
 	void create_dec_tree();

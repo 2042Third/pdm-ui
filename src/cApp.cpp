@@ -24,5 +24,6 @@ bool cApp::OnInit()
 
 	panel_main = new cMain(nullptr, window::id::MAINWINDOW, _("pdm - version 0.1"), wxDefaultPosition,size, wxDEFAULT_FRAME_STYLE, wxASCII_STR(wxFrameNameStr));
 	panel_main->Show(true);
+
 	return true;
 }

@@ -35,12 +35,14 @@ wxBEGIN_EVENT_TABLE(cMain, wxFrame)
   EVT_MENU((wxStandardID)window::id::FOCUS_PSWD, cMain::stc_pswd_focus)
   EVT_MENU((wxStandardID)window::id::FOCUS_USRSPC, cMain::stc_usrspc_focus)
   EVT_MENU(wxID_OPEN, cMain::stc_open)
+  EVT_IDLE(cMain::OnIdle)
   EVT_MENU(wxID_SAVEAS, cMain::stc_save_as)
   EVT_MENU(wxID_NEW, cMain::stc_new)
 	EVT_MENU(wxID_EXIT, cMain::stc_quit)
 	EVT_MENU((wxStandardID)window::id::PDM_ABOUT,cMain::c_about)
 	EVT_MENU((wxStandardID)window::id::LOAD_CONFIG,cMain::stc_load_config)
 	EVT_CLOSE(cMain::on_close)
+
 wxEND_EVENT_TABLE()
 
 
@@ -65,7 +67,7 @@ cMain::cMain(wxWindow* parent,
   menu_pdm  = new wxMenu;
   view_pswd_focus=new wxMenuItem(menu_view,window::id::FOCUS_PSWD, wxString(wxT("To &Password\tCtrl+p")), "Set Focus to password entry without using mouse", wxITEM_NORMAL);
   view_usrspc_focus=new wxMenuItem(menu_view,window::id::FOCUS_USRSPC, wxString(wxT("To &Editor\tCtrl+l")), "Set Focus to editor without using mouse", wxITEM_NORMAL);
-	file_open = new wxMenuItem(menu_file, wxID_OPEN, wxString(wxT("&Open\tCtrl+o")), wxEmptyString, wxITEM_NORMAL);
+	file_open = new wxMenuItem(menu_file, wxID_OPEN, wxString(wxT("&Open\tCtrl+o")), "Opens a file", wxITEM_NORMAL);
 	file_save = new wxMenuItem(menu_file, wxID_SAVE, wxString(wxT("&Save")) + wxT('\t') + wxT("Ctrl+s"), wxEmptyString, wxITEM_NORMAL);
 	file_save_as = new wxMenuItem(menu_file, wxID_SAVEAS, wxString(wxT("&Save As")), wxEmptyString, wxITEM_NORMAL);
 	file_new = new wxMenuItem(menu_file, wxID_NEW, wxString(wxT("&New\tCtrl+n")), wxEmptyString, wxITEM_NORMAL);
@@ -101,14 +103,13 @@ cMain::cMain(wxWindow* parent,
 	pane_files = new wxRichTextCtrl(panel, wxEVT_DROP_FILES, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
 	this->create_dec_tree();
 
-
 	pane_files->SetScrollPos(wxVERTICAL,0,0);
 	pane_files->SetBasicStyle(attr);
 	pane_usrspc = new wxRichTextCtrl(panel, 103, "");
 //	pane_usrspc = new wxTextCtrl(panel, 103, "",wxDefaultPosition,wxDefaultSize,wxTE_MULTILINE|wxTE_WORDWRAP);
 //	pane_usrspc = new wxStyledTextCtrl(panel, wxID_ANY);
 	pane_usrspc->SetBasicStyle(attr);
-	pane_files_sizer = new wxBoxSizer(wxVERTICAL);
+	pane_files_sizer = new wxBoxSizer(wxBOTH);
 	pane_usrspc_sizer = new wxBoxSizer(wxVERTICAL);
 	file_text = new wxStaticText(panel, wxID_ANY, "New_File");
 	passwd_sizer = new wxBoxSizer( wxHORIZONTAL ) ;
@@ -120,14 +121,14 @@ cMain::cMain(wxWindow* parent,
 	passwd_sizer->Add(pswd_text, 1,wxALL | wxEXPAND, 0);
 	passwd_sizer->Add(usr_enter,1,wxALL | wxEXPAND,0);
 	pane_files_sizer->Add(txt,-1, wxEXPAND, 1);
-	pane_files_sizer->Add(tree_ctrl,2, wxALL | wxEXPAND, 1);
+	pane_files_sizer->Add(tree_ctrl,2, wxEXPAND, 1);
 	pane_files_sizer->Add(passwd_sizer,-1,wxALL|wxALIGN_LEFT,1);
-	pane_files_sizer->Add(pane_files,3, wxALL | wxEXPAND, 1);
+	pane_files_sizer->Add(pane_files,3,  wxEXPAND, 1);
 	pane_usrspc_sizer->Add(file_text);
-	pane_usrspc_sizer->Add(pane_usrspc,-1, wxALL|wxEXPAND, 1);
+	pane_usrspc_sizer->Add(pane_usrspc,-1, wxEXPAND|wxFIXED_MINSIZE, 1);
 
 	pane_sizer->Add(pane_files_sizer, 2, wxALL | wxEXPAND, 1);
-	pane_sizer->Add(pane_usrspc_sizer, 3, wxALL | wxEXPAND, 1);
+	pane_sizer->Add(pane_usrspc_sizer, 3,  wxEXPAND|wxFIXED_MINSIZE, 1);
 	panel->SetSizer(pane_sizer);
 
 	d_target =new Tree_Ctrl::DnDFile(pane_files);
@@ -137,24 +138,28 @@ cMain::cMain(wxWindow* parent,
 	pane_files->WriteText(_T("请将需要加密的文件拖入此窗口\n"));
 	// Panel Text
 	tree_ctrl->set_d_target(d_target);
-	menu_bar->Append(menu_pdm, wxT("&PDM"));
+	menu_bar->Append(menu_pdm, wxT("&pdm"));
 	menu_bar->Append(menu_file, wxT("&File"));
 	menu_bar->Append(menu_view, wxT("&View"));
+
+
+
   tree_ctrl->set_parent(this);
-	this->SetMenuBar(menu_bar);
+
 	this->Centre(wxBOTH);
 	this->SetFocus();
 	rc_file = new pdmrc(this);
-  rc_file->init_rc();
+	rc_file->init_rc();
+	rc_file->load_rc();
+  pane_sizer->RecalcSizes();
+  this->CreateStatusBar(4,wxSTB_SHOW_TIPS);
 
+  this->SetStatusText( wxT("pdm"),0 );
+//  this->
 }
 
 void cMain::create_dec_tree(){
-	long styles = wxTR_DEFAULT_STYLE |
-#ifndef NO_VARIABLE_HEIGHT
-                 wxTR_HAS_VARIABLE_ROW_HEIGHT |
-#endif
-                 wxTR_EDIT_LABELS | wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS;
+	long styles =wxTR_HAS_VARIABLE_ROW_HEIGHT | wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS;
 
     tree_creator(styles | wxSIMPLE_BORDER);
 
@@ -178,8 +183,7 @@ void cMain::tree_creator(long style){
 void cMain::Resize()
 {
     size = GetClientSize();
-    tree_ctrl->SetSize(0, 0, size.x, size.y
-    );
+//    tree_ctrl->SetSize(0, 0, size.x, size.y);
 }
 
 /**
@@ -361,8 +365,9 @@ void cMain::cMainOnFile(wxUpdateUIEvent & event) {
 //    std::cout<<"on File \n"<<std::endl;
     if(d_target->has_update_files) tree_ctrl->update_current();
     d_target->has_update_files=0;
-//    rc_file->read_rc();
+//    this->SetStatusText(idle_str,0);
 }
+
 
 void cMain::stc_open(wxCommandEvent& WXUNUSED(event)) {
   std::printf("[stc_open] Starting operation\n");
@@ -494,6 +499,10 @@ void cMain::update_file_label(const wxString& a, int b,int c){
     file_text->SetLabel(a+" [Not Encrypted]");
   }
   rc_file->read_rc();
+
+}
+void cMain::OnIdle( wxIdleEvent& event )
+{
 
 }
 int cMain::check_extend(wxString a){
