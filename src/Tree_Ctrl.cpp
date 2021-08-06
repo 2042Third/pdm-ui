@@ -35,6 +35,7 @@ wxBEGIN_EVENT_TABLE(Tree_Ctrl, wxTreeCtrl)
   MENU_LINK(ItemMenuDelete)
   MENU_LINK(ItemMenuOpenEnc)
   MENU_LINK(ItemMenuOpenPlain)
+  MENU_LINK(ItemMenuDir)
   EVT_MENU_HIGHLIGHT_ALL(Tree_Ctrl::OnMenuHighlight)
   EVT_MENU_CLOSE(Tree_Ctrl::OnMenuClose)
 wxEND_EVENT_TABLE()
@@ -52,8 +53,11 @@ Tree_Ctrl::Tree_Ctrl(wxWindow *parent, const wxWindowID id,
   item_open_enc=new wxMenuItem(menu,ItemMenuOpenEnc,"Open &Encrypted", "Opens Encrypted file if exists");
   item_open_plain=new wxMenuItem(menu,ItemMenuOpenPlain,"Open &Plain Text", "Opens Plain text file if exists");
   item_menu_str=new wxMenuItem(menu,ItemMenuStr,"File info","File info");
+  item_menu_dir=new wxMenuItem(menu,ItemMenuDir,"Open in &Folder","Opens selected file in a folder");
   item_menu_str->Enable(false);
   menu->Append(item_menu_str);
+  menu->Append(item_menu_dir);
+  menu->AppendSeparator();
   menu->Append(item_delete);
   menu->AppendSeparator();
   menu->Append(item_open_enc);
@@ -277,14 +281,19 @@ void Tree_Ctrl::OnMenuHighlight(wxMenuEvent& event)
         case ItemMenuStr:
           ((cMain*)parent)->SetStatusText("File info",0);
           break;
+        case ItemMenuDir:
+          ((cMain*)parent)->SetStatusText("Opens the file in a separate folder",0);
+          break;
       }
     }
     msg << ".";
   }
 void Tree_Ctrl::OnItemMenuDelete(wxCommandEvent& event){
   wxTreeItemId itemId = this->GetFocusedItem();
-  this->DeleteChildren(itemId);
+//  this->DeleteChildren(itemId);//Doesn't refresh
   tree_eles.erase(get_item_hash(name_by_event(event)));
+  this->Delete(itemId);
+
 }
 void Tree_Ctrl::OnItemMenuOpenEnc(wxCommandEvent &event) {
   ((cMain*)parent)->open_enc_file(name_by_event(event));
@@ -296,6 +305,22 @@ void Tree_Ctrl::OnItemMenuOpenPlain(wxCommandEvent& event){
 
 void Tree_Ctrl::OnGetToolTip(wxCommandEvent& event){
   ((cMain*)parent)->SetStatusText(event.GetString(),0);
+}
+void Tree_Ctrl::OnItemMenuDir(wxCommandEvent& event){
+  wxString directory_open = name_by_event(event);
+
+  #ifdef __WXMSW__
+    wxExecute(_("explorer.exe "+directory_open));
+  #endif//WXMSW
+  #ifdef __WXMAC__
+    wxExecute(_("open -R "+directory_open));
+  #endif//__WXMAC__
+  #ifdef __WXGTK__
+    wxExecute(_("nautilus "+directory_open));
+    ((cMain*)parent)->write_log("The Linux distribution information is not clear");
+    ((cMain*)parent)->write_log("If nothing happens, you may manually goto \""+
+    directory_open+"\" directly.");
+  #endif//__WXGTK__
 }
 
 void Tree_Ctrl::LogEvent(const wxString& name, const wxTreeEvent& event)

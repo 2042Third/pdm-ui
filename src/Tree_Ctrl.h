@@ -74,6 +74,7 @@ public:
     void OnItemMenuDelete(wxCommandEvent& event);
     void OnItemMenuOpenEnc(wxCommandEvent& event);
     void OnItemMenuOpenPlain(wxCommandEvent& event);
+    void OnItemMenuDir(wxCommandEvent& event);
     void OnMenuClose(wxMenuEvent& event);
     wxString name_by_event(wxTreeEvent& event);
     wxString name_by_event(wxCommandEvent& event);
@@ -104,6 +105,7 @@ public:
     wxMenuItem* item_open_enc;
     wxMenuItem* item_open_plain;
     wxMenuItem* item_menu_str;
+    wxMenuItem* item_menu_dir;
     size_t get_item_hash(wxString a);
     void set_parent(wxFrame* a){parent=a;}
     void set_d_target(Tree_Ctrl::DnDFile* d){d_target=d;}
@@ -147,7 +149,7 @@ enum{
     ItemMenuDelete,
     ItemMenuOpenEnc,
     ItemMenuOpenPlain,
-    ItemMenu,
+    ItemMenuDir,
     ItemMenuStr
 };
 #endif //PDM_TREE_CTRL_H

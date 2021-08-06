@@ -20,7 +20,7 @@ public:
 	cApp() { m_showImages = true; m_showStates = true; m_showButtons = false; }
 	~cApp();
 
-    bool OnInit() wxOVERRIDE;
+    bool OnInit() ;
 
     void SetShowImages(bool show) { m_showImages = show; }
     bool ShowImages() const { return m_showImages; }

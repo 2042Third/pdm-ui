@@ -75,8 +75,8 @@ void pdmrc::read_rc(){
   wxXmlNode*tree_str2_rc=NULL;
 
   for (auto const& fl:((cMain*)parent)->tree_ctrl->tree_eles){
-    std::cout<<"Read and writing config "
-          <<fl.second<<std::endl;
+//    std::cout<<"Read and writing config "
+//          <<fl.second<<std::endl;
     tree_file_rc=new wxXmlNode(wxXML_ELEMENT_NODE,"f"+std::to_string(count));
     if(tree_str1_rc)tree_str1_rc->SetNext(tree_file_rc);
     tree_str2_rc=new wxXmlNode(wxXML_TEXT_NODE,"",fl.second);

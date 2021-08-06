@@ -357,8 +357,8 @@ void cMain::c_about(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox("pdm\n"
 //                 "Personal Data Management, encrypted data managemenent \n Yi Yang",
-                 "个人数据管理, 加密系统。 \n \t由杨译个人开发，所加密数据由用户所有。如密码丢失，其pdm数据将永久丢失。",
-                 "2021",
+                 "个人数据管理, 加密系统。 \n \t所加密数据由用户所有。如密码丢失，其pdm数据将永久丢失。",
+                 "2021 杨译",
                  wxOK | wxICON_INFORMATION, this);
 }
 
