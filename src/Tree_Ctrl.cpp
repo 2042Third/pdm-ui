@@ -107,8 +107,18 @@ void Tree_Ctrl::update_current(){
 
 }
 
+void Tree_Ctrl::clear_files_tree() {
+  tree_eles.clear();
+  reload_tree_from_eles();
+}
+void Tree_Ctrl::reload_tree_from_eles() {
+  this->DeleteAllItems();
+  for(auto const& fl:tree_eles){
+    addFileToTree(fl.second);
+  }
+}
+
 void Tree_Ctrl::addFileToTree(const wxString& tree_str) {
-//    if(tree_str.empty()) return;
     int item_enc=0;
     wxString filename = tree_str;
     if(((cMain*)parent)->check_extend(tree_str)) {
@@ -121,14 +131,10 @@ void Tree_Ctrl::addFileToTree(const wxString& tree_str) {
     else
       item_enc=-1;
     size_t a = hasher((char*)filename.mb_str().data());
-//    size_t b = hasher((char*)filename.mb_str().data());
-    std::cout<<"Hashing "<<a<<std::endl;
     tree_pair = tree_eles.insert(std::pair<size_t,std::string>(a, (char*)filename.mb_str().data()));
     if( tree_pair.second==false)return;
-    std::cout<<"Adding "<<tree_str<<std::endl;
     wxTreeItemId id = AppendItem(rootId, wxFileNameFromPath(filename),-1,
                                  -1,new Tree_Data(filename));
-
     SetItemTextColour(id,wxTheColourDatabase->Find("LIGHT GREY"));
     if(item_enc==1)
       SetItemTextColour(id,wxTheColourDatabase->Find("WHITE"));
@@ -162,10 +168,7 @@ wxString Tree_Ctrl::name_by_event(wxTreeEvent& event){
   return file_name_copy;
 }
 wxString Tree_Ctrl::name_by_event(wxCommandEvent& event){
-//  wxTreeItemId itemId = event.GetItem();
   wxTreeItemId itemId = this->GetFocusedItem();
-//  if ( !item.IsOk() )
-//    item = m_treeCtrl->GetRootItem();
   auto *item = (Tree_Data *)GetItemData(itemId);
   wxString file_name_copy = item->m_desc;
   return file_name_copy;
@@ -173,14 +176,11 @@ wxString Tree_Ctrl::name_by_event(wxCommandEvent& event){
 
 void Tree_Ctrl::OnItemActivated(wxTreeEvent& event){
   std::printf("[tree::OnItemActivated] Starting operation\n");
-
   wxTreeItemId itemId = event.GetItem();
   auto *item = (Tree_Data *)GetItemData(itemId);
   wxString file_name_copy = item->m_desc;
-
   if(wxFileExists(file_name_copy+".pdm"))((cMain*)parent)->open_enc_file(file_name_copy);
   else ((cMain*)parent)->open_file(file_name_copy);
-
 }
 
 bool Tree_Ctrl::DnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames){
@@ -202,7 +202,6 @@ bool Tree_Ctrl::DnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& file
 }
 
 size_t Tree_Ctrl::get_item_hash(wxString a) {
-//  size_t b = hasher((char*)a.mb_str().data());
   return hasher((char*)a.mb_str().data());
 }
 
@@ -238,11 +237,7 @@ wxString Tree_Ctrl::get_tooltip (wxTreeEvent& event){
 void Tree_Ctrl::OnItemMenu(wxTreeEvent& event){
   wxTreeItemId itemId = event.GetItem();
   wxCHECK_RET( itemId.IsOk(), "should have a valid item" );
-  std::cout<<"In onItemMenu"<<std::endl;
-//  Tree_Data *item = (Tree_Data *)GetItemData(itemId);
   wxPoint clientpt = event.GetPoint();
-//  wxPoint screenpt = ClientToScreen(clientpt);
-
   wxString title;
   if ( itemId.IsOk() )
   {
@@ -252,7 +247,6 @@ void Tree_Ctrl::OnItemMenu(wxTreeEvent& event){
   {
     title = "Menu for no particular item";
   }
-//  menu->Destroy();
   menu->SetTitle(title);
   item_menu_str->SetItemLabel(get_tooltip(event));
   PopupMenu(menu, clientpt);
@@ -285,34 +279,23 @@ void Tree_Ctrl::OnMenuHighlight(wxMenuEvent& event)
           break;
       }
     }
-
-
     msg << ".";
-//    wxLogStatus(this, msg);
   }
 void Tree_Ctrl::OnItemMenuDelete(wxCommandEvent& event){
-//  event=(wxTreeEvent)event;
   wxTreeItemId itemId = this->GetFocusedItem();
-  std::cout<<"Try to delete tree item"<<std::endl;
-
-//wxTreeItemId itemId = event.GetItem();
   this->DeleteChildren(itemId);
   tree_eles.erase(get_item_hash(name_by_event(event)));
 }
 void Tree_Ctrl::OnItemMenuOpenEnc(wxCommandEvent &event) {
-  std::cout<<"Try to open encrypt form tree item"<<std::endl;
   ((cMain*)parent)->open_enc_file(name_by_event(event));
 }
 void Tree_Ctrl::OnItemMenuOpenPlain(wxCommandEvent& event){
-  std::cout<<"Try to open plain form tree item"<<std::endl;
   ((cMain*)parent)->open_file(name_by_event(event));
 
 }
 
 void Tree_Ctrl::OnGetToolTip(wxCommandEvent& event){
-
   ((cMain*)parent)->SetStatusText(event.GetString(),0);
-
 }
 
 void Tree_Ctrl::LogEvent(const wxString& name, const wxTreeEvent& event)
@@ -323,11 +306,7 @@ void Tree_Ctrl::LogEvent(const wxString& name, const wxTreeEvent& event)
         text << '"' << GetItemText(item).c_str() << '"';
     else
         text = "invalid item";
-    // wxLogMessage("%s(%s)", name, text);
 }
-
-// ADDED FROM WXWIDGETS MANUAL, for tree
-// avoid repetition
 #define TREE_EVENT_HANDLER(name)                                 \
 void Tree_Ctrl::name(wxTreeEvent& event)                        \
 {                                                                \
@@ -338,8 +317,6 @@ void Tree_Ctrl::name(wxTreeEvent& event)                        \
 TREE_EVENT_HANDLER(OnItemExpanded)
 TREE_EVENT_HANDLER(OnItemExpanding)
 TREE_EVENT_HANDLER(OnItemCollapsed)
-//TREE_EVENT_HANDLER(OnItemMenuDelete)
-//TREE_EVENT_HANDLER(OnItemCollapsed)
 
 #undef TREE_EVENT_HANDLER
 

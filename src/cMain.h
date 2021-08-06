@@ -16,6 +16,7 @@
 #include <vector>
 #include <wx/statusbr.h>
 #include <wx/string.h>
+#include <wx/splitter.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
@@ -75,7 +76,9 @@ public:
 	wxMenu* menu_file;
 	wxMenu* menu_view;
 	wxMenu* menu_pdm;
+	wxMenu* menu_edit;
 	wxMenuItem* pdm_about;
+	wxMenuItem* edit_clear_tree;
 	wxMenuItem* view_pswd_focus;
 	wxMenuItem* view_usrspc_focus;
 	wxMenuItem* file_open;
@@ -87,15 +90,22 @@ public:
 	wxMenuItem* file_config;
 
 	// Window handle
-	wxPanel* panel = nullptr;
+//	wxPanel* panel = nullptr;
+	wxPanel* panel_usrspc = nullptr;
+//	wxPanel* panel_files = nullptr;
+	wxPanel* panel_files_files = nullptr;
+	wxPanel* panel_files_tree = nullptr;
 	wxStaticBox* pane_auth = nullptr;
 	wxRichTextCtrl* pane_files = nullptr;
 	wxRichTextCtrl* pane_usrspc = nullptr;
-//	wxStyledTextCtrl* pane_usrspc = nullptr;
-//	wxTextCtrl* pane_usrspc;
-  wxBoxSizer* pane_sizer = nullptr;
+	wxSplitterWindow* pane_splitter = nullptr;
+	wxSplitterWindow* pane_files_splitter = nullptr;
+
+//  wxBoxSizer* pane_sizer = nullptr;
   wxBoxSizer* passwd_sizer = nullptr;
   wxBoxSizer* pane_files_sizer = nullptr;
+  wxBoxSizer* pane_files_files_sizer = nullptr;
+  wxBoxSizer* pane_tree_sizer = nullptr;
   wxBoxSizer* pane_usrspc_sizer = nullptr;
 	wxStaticText* txt = nullptr;
 	wxTextCtrl* usr_enter;
@@ -125,6 +135,7 @@ public:
 	void stc_save(wxCommandEvent& event);
 	void stc_save_as(wxCommandEvent& event);
 	void stc_new(wxCommandEvent& event);
+	void stc_clear_tree(wxCommandEvent& event);
 	void OnIdle( wxIdleEvent& event );
 	void on_close(wxCloseEvent& event);
 	void c_about(wxCommandEvent& event);
@@ -132,6 +143,9 @@ public:
 	void OneKeyEnter(wxCommandEvent& event);
 	void OnFont();
 	void Resize();
+	void init_pane_files();
+	void init_pane_files_files();
+	void init_pane_files_tree();
 	void update_file_label(const wxString& a, int b, int c);
 	void stc_pswd_focus(wxCommandEvent& event);
 	void stc_usrspc_focus(wxCommandEvent& event);

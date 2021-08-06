@@ -15,26 +15,36 @@ void pdmrc::init_rc(){
   pdm_rc=new wxXmlDocument();
   pdm_dir=new wxFileName();
   loader=new wxXmlDocument();
-  doc_rc = new wxXmlNode(wxXML_ELEMENT_NODE,"pdm",wxNow());
+  //Reserved, uncomment if need different documentation
+//  doc_rc = new wxXmlNode(wxXML_ELEMENT_NODE,"pdm",wxNow());
   root_rc = new wxXmlNode(nullptr,wxXML_ELEMENT_NODE,"pdm",wxEmptyString,new wxXmlAttribute("class","pdm"));
   child_time = (new wxXmlNode(wxXML_ELEMENT_NODE,"logs"));
   child_time->AddChild(new wxXmlNode(wxXML_TEXT_NODE,"",wxNow()));
   root_rc->AddChild(child_time);
 //  root_rc->GetChildren()->GetNext()->AddChild(new wxXmlNode(wxXML_ENTITY_REF_NODE,"time",wxNow()));
-  pdm_rc->SetDocumentNode(doc_rc);
+//  pdm_rc->SetDocumentNode(doc_rc);
   pdm_rc->SetRoot(root_rc);
 }
 
 void pdmrc::load_rc(){
-  wxString directory_name=pdm_dir->GetCwd()+sp+".pdmrc";
-//  load_rc1=new wxXmlNode();
-  if(!wxFileExists(directory_name+sp+file_name))return;
-  loader->Load(directory_name+sp+file_name);
-  load_rc2=loader->GetRoot()->GetChildren();
-  std::cout<<"Reading config file "<<directory_name+sp+file_name<<std::endl;
-//  load_rc2=load_rc2->GetNext();
-  while(load_rc2){
+//  wxString directory_name=pdm_dir->GetCwd()+sp+".pdmrc";
+  wxString directory_name=file_dirtry;
+  if(!wxFileExists(directory_name+sp+file_name)){
+    ((cMain*)parent)->write_log("No configuration files");
+    return;
+  }
+  std::cout<<"rc1 "<<directory_name+sp+file_name<<std::endl;
+  loader=new wxXmlDocument();
 
+  loader->Load(directory_name+sp+file_name);
+  if(!loader->IsOk()){
+    ((cMain*)parent)->write_log("Configuration file loading failure");
+    return;
+  }
+  load_rc2=loader->GetRoot()->GetChildren();
+
+  std::cout<<"Reading config file "<<directory_name+sp+file_name<<std::endl;
+  while(load_rc2){
     if(load_rc2->GetName()=="logs"){
       load_rc1=load_rc2->GetChildren();
       std::cout<<"last save loaded from "+
@@ -65,30 +75,21 @@ void pdmrc::read_rc(){
   wxXmlNode*tree_str2_rc=NULL;
 
   for (auto const& fl:((cMain*)parent)->tree_ctrl->tree_eles){
-    if(fl.second==false) break;
     std::cout<<"Read and writing config "
           <<fl.second<<std::endl;
-//    if(((cMain*)parent)->DEBUG_OUT_PDM)
-//      ((cMain*)parent)->write_log("Read config "+fl.second);
     tree_file_rc=new wxXmlNode(wxXML_ELEMENT_NODE,"f"+std::to_string(count));
     if(tree_str1_rc)tree_str1_rc->SetNext(tree_file_rc);
     tree_str2_rc=new wxXmlNode(wxXML_TEXT_NODE,"",fl.second);
-//    tree_file_rc->AddChild(tree_str1_rc);
     tree_file_rc->AddChild(tree_str2_rc);
     tree_rc->AddChild(tree_file_rc);
     count++;
-
     tree_str1_rc=tree_file_rc;
-
   }
-//  delete tree_file_rc;
-//  delete tree_str1_rc;
-//  delete tree_str2_rc;
 }
 
 void pdmrc::save_rc() {
   pdm_dir=new wxFileName();
-  wxString directory_name=pdm_dir->GetCwd()+sp+".pdmrc";
+  wxString directory_name=file_dirtry;
   if(tree_rc!= nullptr)
     root_rc->AddChild(tree_rc);
   pdm_dir->Mkdir(directory_name,0777,wxPATH_MKDIR_FULL);

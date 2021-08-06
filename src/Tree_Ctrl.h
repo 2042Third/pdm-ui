@@ -78,11 +78,11 @@ public:
     wxString name_by_event(wxTreeEvent& event);
     wxString name_by_event(wxCommandEvent& event);
     wxString get_tooltip(wxTreeEvent& event);
+    void clear_files_tree();
+    void reload_tree_from_eles();
     void OnGetToolTip(wxCommandEvent& event) ;
-
     void SetAlternateImages(bool show) { m_alternateImages = show; }
     bool AlternateImages() const { return m_alternateImages; }
-
     void SetAlternateStates(bool show) { m_alternateStates = show; }
     bool AlternateStates() const { return m_alternateStates; }
     class DnDFile : public wxFileDropTarget

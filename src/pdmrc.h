@@ -33,6 +33,7 @@ private:
   wxFileName* pdm_dir = new wxFileName();
   wxXmlNode* tree_rc=new wxXmlNode(wxXML_ELEMENT_NODE,"tree-rc");
   wxXmlDocument* pdm_rc{};
+  const wxString file_dirtry="~/.pdmrc";
   const wxString sp= wxFileName::GetPathSeparators();
   const wxString file_name = "pdm_rc.conf";
 };

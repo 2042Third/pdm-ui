@@ -41,6 +41,7 @@ wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 	EVT_MENU(wxID_EXIT, cMain::stc_quit)
 	EVT_MENU((wxStandardID)window::id::PDM_ABOUT,cMain::c_about)
 	EVT_MENU((wxStandardID)window::id::LOAD_CONFIG,cMain::stc_load_config)
+	EVT_MENU((wxStandardID)window::id::EDIT_CLEAR_TREE,cMain::stc_clear_tree)
 	EVT_CLOSE(cMain::on_close)
 
 wxEND_EVENT_TABLE()
@@ -65,6 +66,7 @@ cMain::cMain(wxWindow* parent,
 	menu_file = new wxMenu;
   menu_view = new wxMenu;
   menu_pdm  = new wxMenu;
+  menu_edit  = new wxMenu;
   view_pswd_focus=new wxMenuItem(menu_view,window::id::FOCUS_PSWD, wxString(wxT("To &Password\tCtrl+p")), "Set Focus to password entry without using mouse", wxITEM_NORMAL);
   view_usrspc_focus=new wxMenuItem(menu_view,window::id::FOCUS_USRSPC, wxString(wxT("To &Editor\tCtrl+l")), "Set Focus to editor without using mouse", wxITEM_NORMAL);
 	file_open = new wxMenuItem(menu_file, wxID_OPEN, wxString(wxT("&Open\tCtrl+o")), "Opens a file", wxITEM_NORMAL);
@@ -72,8 +74,9 @@ cMain::cMain(wxWindow* parent,
 	file_save_as = new wxMenuItem(menu_file, wxID_SAVEAS, wxString(wxT("&Save As")), wxEmptyString, wxITEM_NORMAL);
 	file_new = new wxMenuItem(menu_file, wxID_NEW, wxString(wxT("&New\tCtrl+n")), wxEmptyString, wxITEM_NORMAL);
 	pdm_about = new wxMenuItem(menu_file, window::id::PDM_ABOUT,wxString(wxT("&About")),"About pdm",wxITEM_NORMAL);
-	file_quit = new wxMenuItem(menu_file,wxID_EXIT);
-	file_config = new wxMenuItem(menu_file,window::id::LOAD_CONFIG,wxString(wxT("Load Confi&g\tCtrl+g")));
+	file_quit = new wxMenuItem(menu_pdm,wxID_EXIT);
+	file_config = new wxMenuItem(menu_file,window::id::LOAD_CONFIG,wxString(wxT("Load Confi&g\tCtrl+g")), "Reloads the configuration file ");
+	edit_clear_tree = new wxMenuItem(menu_edit,window::id::EDIT_CLEAR_TREE,wxString(wxT("Clear &Tree")), "Clears all files from the tree ");
 
 	menu_file->Append(file_open);
 	menu_file->Append(file_new);
@@ -82,57 +85,45 @@ cMain::cMain(wxWindow* parent,
 	menu_file->Append(file_save_as);
 	menu_file->Append(file_config);
 	menu_pdm->Append(pdm_about);
-	menu_file->Append(file_quit);
+	menu_pdm->Append(file_quit);
 	menu_view->Append(view_pswd_focus);
 	menu_view->Append(view_usrspc_focus);
-	// Menu event
-
-	// Menu event
-
+	menu_edit->Append(edit_clear_tree);
 	attr.SetTextColour(*wxWHITE);
 
-	panel = new wxPanel(this);
 
-	panel->SetMinSize(GetBestSize());
-	pane_sizer = new wxBoxSizer(4);
+//	pane_sizer = new wxBoxSizer(wxHORIZONTAL);
+	pane_splitter = new wxSplitterWindow(this, -1, wxDefaultPosition,wxDefaultSize,  wxSP_LIVE_UPDATE);
+	pane_splitter->SetSashGravity(0.3);
+  pane_splitter->SetMinimumPaneSize(20);
+//  pane_sizer->Add(pane_splitter,2,wxEXPAND,0);
+
+
+
+
+
 	this->SetMenuBar(menu_bar);
-	pane_sizer->SetMinSize(GetBestSize());
 
-	txt = new wxStaticText(panel, wxID_ANY, wxT("Encrypted Files"));
+  this->init_pane_files();
+  //############USER SPACE##############
+	panel_usrspc = new wxPanel(pane_splitter);
 
-	pane_files = new wxRichTextCtrl(panel, wxEVT_DROP_FILES, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
-	this->create_dec_tree();
-
-	pane_files->SetScrollPos(wxVERTICAL,0,0);
-	pane_files->SetBasicStyle(attr);
-	pane_usrspc = new wxRichTextCtrl(panel, 103, "");
-//	pane_usrspc = new wxTextCtrl(panel, 103, "",wxDefaultPosition,wxDefaultSize,wxTE_MULTILINE|wxTE_WORDWRAP);
-//	pane_usrspc = new wxStyledTextCtrl(panel, wxID_ANY);
-	pane_usrspc->SetBasicStyle(attr);
-	pane_files_sizer = new wxBoxSizer(wxBOTH);
 	pane_usrspc_sizer = new wxBoxSizer(wxVERTICAL);
-	file_text = new wxStaticText(panel, wxID_ANY, "New_File");
-	passwd_sizer = new wxBoxSizer( wxHORIZONTAL ) ;
-	pswd_text= new wxStaticText(panel, wxID_ANY, _("Password"));
-	usr_enter = new wxTextCtrl(panel,wxEVT_TEXT_ENTER, wxEmptyString,
-                             wxDefaultPosition,  wxDefaultSize,
-                             wxTE_PASSWORD,  wxDefaultValidator,
-                             "密码");
-	passwd_sizer->Add(pswd_text, 1,wxALL | wxEXPAND, 0);
-	passwd_sizer->Add(usr_enter,1,wxALL | wxEXPAND,0);
-	pane_files_sizer->Add(txt,-1, wxEXPAND, 1);
-	pane_files_sizer->Add(tree_ctrl,2, wxEXPAND, 1);
-	pane_files_sizer->Add(passwd_sizer,-1,wxALL|wxALIGN_LEFT,1);
-	pane_files_sizer->Add(pane_files,3,  wxEXPAND, 1);
+	pane_usrspc = new wxRichTextCtrl(panel_usrspc, 103, "");
+	pane_usrspc->SetBasicStyle(attr);
+	pane_files->SetBasicStyle(attr);
+	file_text = new wxStaticText(panel_usrspc, wxID_ANY, "New_File");
 	pane_usrspc_sizer->Add(file_text);
-	pane_usrspc_sizer->Add(pane_usrspc,-1, wxEXPAND|wxFIXED_MINSIZE, 1);
+	pane_usrspc_sizer->Add(pane_usrspc,-1, wxEXPAND, 1);
 
-	pane_sizer->Add(pane_files_sizer, 2, wxALL | wxEXPAND, 1);
-	pane_sizer->Add(pane_usrspc_sizer, 3,  wxEXPAND|wxFIXED_MINSIZE, 1);
-	panel->SetSizer(pane_sizer);
+	panel_usrspc->SetSizer(pane_usrspc_sizer);
 
-	d_target =new Tree_Ctrl::DnDFile(pane_files);
-	pane_files->SetDropTarget(d_target);
+	std::cout<<"Two panels created5"<<std::endl;
+
+
+	pane_splitter->SplitVertically(pane_files_splitter,panel_usrspc);
+	std::cout<<"Main splitter set"<<std::endl;
+
 	maintain_theme();
 
 	pane_files->WriteText(_T("请将需要加密的文件拖入此窗口\n"));
@@ -141,29 +132,90 @@ cMain::cMain(wxWindow* parent,
 	menu_bar->Append(menu_pdm, wxT("&pdm"));
 	menu_bar->Append(menu_file, wxT("&File"));
 	menu_bar->Append(menu_view, wxT("&View"));
-
-
-
+	menu_bar->Append(menu_edit, wxT("&Edit"));
   tree_ctrl->set_parent(this);
-
 	this->Centre(wxBOTH);
 	this->SetFocus();
+	std::cout<<"try to read rc"<<std::endl;
+
 	rc_file = new pdmrc(this);
 	rc_file->init_rc();
 	rc_file->load_rc();
-  pane_sizer->RecalcSizes();
   this->CreateStatusBar(4,wxSTB_SHOW_TIPS);
+  std::cout<<"Main splitter set"<<std::endl;
 
   this->SetStatusText( wxT("pdm"),0 );
-//  this->
+  pane_splitter->SetSashPosition((int)(size.x/3));
+  std::cout<<"Main splitter set"<<std::endl;
+
 }
+
+void cMain::init_pane_files(){
+//  panel_files = new wxPanel(pane_splitter);
+//  pane_files_sizer = new wxBoxSizer(wxVERTICAL);
+
+  pane_files_splitter = new wxSplitterWindow(pane_splitter,wxID_ANY, wxDefaultPosition,wxDefaultSize,  wxSP_LIVE_UPDATE);
+  pane_files_splitter->SetSashGravity(0.5);
+  pane_files_splitter->SetMinimumPaneSize(1);
+  this->init_pane_files_tree();//-->panel_files_tree
+  this->init_pane_files_files();//-->panel_files_tree
+
+//pane_files_splitter->SplitHorizontally(panel_files_tree,panel_files_files);
+pane_files_splitter->SplitHorizontally(panel_files_tree,panel_files_files);
+
+//  panel_files->SetSizer(pane_files_sizer);
+//  pane_files_sizer->SetSizeHints(panel_files);
+}
+
+/**
+ * Put these created panels in a sizer
+ * @create panel_files_tree, txt, tree_ctrl
+ * @return NO RETURN, panel_files_tree
+ * */
+void cMain::init_pane_files_tree(){
+  pane_tree_sizer=new wxBoxSizer(wxVERTICAL);
+  panel_files_tree=new wxPanel(pane_files_splitter);
+  txt = new wxStaticText(panel_files_tree, wxID_ANY, wxT("Encrypted Files"));
+  this->create_dec_tree();
+  pane_tree_sizer->Add(txt);
+  pane_tree_sizer->Add(tree_ctrl,-1,wxALL|wxEXPAND,1);
+  panel_files_tree->SetSizer(pane_tree_sizer);
+
+}
+/**
+ * Creates panel files files
+ *  @return NO RETURN,
+ * */
+void cMain::init_pane_files_files() {
+  panel_files_files = new wxPanel(pane_files_splitter);
+  pane_files_files_sizer= new wxBoxSizer(wxVERTICAL);
+  passwd_sizer = new wxBoxSizer( wxHORIZONTAL ) ;
+  pane_files = new wxRichTextCtrl(panel_files_files, wxEVT_DROP_FILES, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
+  pswd_text= new wxStaticText(panel_files_files, wxID_ANY, _("Password"));
+  usr_enter = new wxTextCtrl(panel_files_files,wxEVT_TEXT_ENTER, wxEmptyString,
+                             wxDefaultPosition,  wxDefaultSize,
+                             wxTE_PASSWORD,  wxDefaultValidator,
+                             "密码");
+  passwd_sizer->Add(pswd_text);
+  passwd_sizer->Add(usr_enter);
+
+  pane_files_files_sizer->Add(passwd_sizer);
+  pane_files_files_sizer->Add(pane_files,1,  wxEXPAND, 1);
+
+  d_target =new Tree_Ctrl::DnDFile(pane_files);
+  pane_files->SetDropTarget(d_target);
+  panel_files_files->SetSizer(pane_files_files_sizer);
+
+}
+
 
 void cMain::create_dec_tree(){
 	long styles =wxTR_HAS_VARIABLE_ROW_HEIGHT | wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS;
+	tree_creator(styles | wxSIMPLE_BORDER);
+}
 
-    tree_creator(styles | wxSIMPLE_BORDER);
-
-
+void cMain::stc_clear_tree(wxCommandEvent &event) {
+  tree_ctrl->clear_files_tree();
 }
 
 /*
@@ -171,7 +223,7 @@ void cMain::create_dec_tree(){
 
 */
 void cMain::tree_creator(long style){
-	tree_ctrl = new Tree_Ctrl( panel ,Dec_Tree,
+  tree_ctrl = new Tree_Ctrl( panel_files_tree ,Dec_Tree,
                                 wxDefaultPosition, wxDefaultSize,
                                 style);
     this->Resize();
@@ -330,7 +382,7 @@ void cMain::on_close(wxCloseEvent& event){
 
   rc_file->save_rc();
 	if (event.CanVeto()) {
-	    int answer = wxMessageBox(_T("退出!"), _T("请确认加密文件已保存"),wxYES_NO| wxCANCEL,panel);
+	    int answer = wxMessageBox(_T("退出!"), _T("请确认加密文件已保存"),wxYES_NO| wxCANCEL,panel_usrspc);
 		this->SetFocus();
 		if (answer != wxYES) {
 //		  delete rc_file;
@@ -346,8 +398,12 @@ void cMain::on_close(wxCloseEvent& event){
 void cMain::maintain_theme(){
 	attr.SetTextColour(wxTEXT_ATTR_TEXT_COLOUR);
 	// Color Settings
-	panel->SetBackgroundColour(wxTheColourDatabase->Find("DIM GREY"));
-	panel->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+	panel_usrspc->SetBackgroundColour(wxTheColourDatabase->Find("DIM GREY"));
+	panel_usrspc->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+	panel_files_files->SetBackgroundColour(wxTheColourDatabase->Find("DIM GREY"));
+//	panel_files_files->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
+	panel_files_tree->SetBackgroundColour(wxTheColourDatabase->Find("DIM GREY"));
+//	panel_files_tree->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 	txt->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 	file_text->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 	pswd_text->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
@@ -356,9 +412,9 @@ void cMain::maintain_theme(){
 	usr_enter->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 	tree_ctrl->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 	pane_files->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
+	pane_files->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 	pane_usrspc->SetBackgroundColour(wxTheColourDatabase->Find("DARK GREY"));
 
-	pane_usrspc->SetForegroundColour(wxTheColourDatabase->Find("WHITE"));
 
 }
 void cMain::cMainOnFile(wxUpdateUIEvent & event) {
